@@ -49,10 +49,7 @@
 <Pane prefHeight="29.0" prefWidth="55.0" GridPane.columnIndex="7" GridPane.rowIndex="0" />
 <Pane prefHeight="29.0" prefWidth="55.0" GridPane.columnIndex="8" GridPane.rowIndex="0" />
 <Pane prefHeight="29.0" prefWidth="55.0" GridPane.columnIndex="9" GridPane.rowIndex="0" />
-<Pane prefHeight="29.0" prefWidth="55.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
-               <children>
-      <Pane layoutX="33.0" layoutY="7.0" prefHeight="29.0" prefWidth="55.0" />
-               </children></Pane>
+<Pane prefHeight="29.0" prefWidth="55.0" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 <Pane prefHeight="29.0" prefWidth="55.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
 <Pane prefHeight="29.0" prefWidth="55.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 <Pane prefHeight="29.0" prefWidth="55.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
@@ -191,6 +188,7 @@
 <Pane prefHeight="29.0" prefWidth="55.0" GridPane.columnIndex="7" GridPane.rowIndex="14" />
 <Pane prefHeight="29.0" prefWidth="55.0" GridPane.columnIndex="8" GridPane.rowIndex="14" />
 <Pane prefHeight="29.0" prefWidth="55.0" GridPane.columnIndex="9" GridPane.rowIndex="14" />
+            <Pane prefHeight="43.0" prefWidth="92.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <Button layoutX="98.0" mnemonicParsing="false" onAction="#backtomenu" text="main menu" />
