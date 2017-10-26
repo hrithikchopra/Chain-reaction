@@ -33,7 +33,16 @@ public class Gridcontroller2 implements Initializable {
 
     @FXML
     private URL location;
-
+    @FXML
+    public void restartgame(ActionEvent event) throws Exception{
+    	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(Mainmenucontroller.gridchoice));
+    	root.setBackground(null);
+    	if(root==null){
+    		//System.out.println("fdfsf");
+    	}
+    	else
+    		root.getChildren().setAll(page);
+    }
     @FXML
     void backtomenu(ActionEvent event) throws Exception{
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Mainmenu.fxml"));
