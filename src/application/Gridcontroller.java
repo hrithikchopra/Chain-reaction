@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -38,6 +39,8 @@ public class Gridcontroller implements Initializable {
     void backtomenu(ActionEvent event) throws Exception{
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Mainmenu.fxml"));
     	//root.setBackground(null);
+    	Slider s=(Slider)page.getChildren().get(0);
+    	s.setValue(Mainmenucontroller.playercount);
     	if(root==null){
     		//System.out.println("fdfsf");
     	}
