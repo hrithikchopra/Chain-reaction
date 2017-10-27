@@ -1,4 +1,9 @@
 package application;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -22,6 +27,7 @@ public class Mainmenucontroller implements Initializable {
     @FXML
     void clicked(ActionEvent event) throws Exception {
     	playercount=(int)no_of_players.getValue();
+    	Game g=new Game(playercount,gridchoice);
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(gridchoice));
     	rootpane.setBackground(null);
     	if(rootpane==null){
@@ -53,6 +59,27 @@ public class Mainmenucontroller implements Initializable {
     	else
     		rootpane.getChildren().setAll(page);
     }
+    public static void serialize(Game g,String v) throws IOException {
+		ObjectOutputStream out=null;
+		try{
+			out=new ObjectOutputStream(new FileOutputStream(v));
+			out.writeObject(g);
+		}
+		finally{
+			out.close();
+		}
+	}
+	public static Game deserialize(String h) throws IOException, ClassNotFoundException {
+		ObjectInputStream in=null;
+		try{
+			in=new ObjectInputStream(new FileInputStream(h));
+			Game g=(Game)in.readObject();
+			return g;
+		}
+		finally{
+			in.close();
+		}
+	}
     @FXML
     void initialize() {
     	
