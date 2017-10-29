@@ -36,6 +36,7 @@ public class Gridcontroller2 implements Initializable {
     @FXML
     public void restartgame(ActionEvent event) throws Exception{
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(Mainmenucontroller.gridchoice));
+    	Mainmenucontroller.g=new Game(Mainmenucontroller.playercount,Mainmenucontroller.gridchoice);
     	root.setBackground(null);
     	if(root==null){
     		//System.out.println("fdfsf");
@@ -82,6 +83,7 @@ public class Gridcontroller2 implements Initializable {
         		addorb3(colIndex.intValue(),rowIndex.intValue());
         	balls[rowIndex.intValue()][colIndex.intValue()]++;
         	}
+        	Mainmenucontroller.g.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].n_orbs=balls[rowIndex.intValue()][colIndex.intValue()];
         }
     }
     public void addorb1(int x,int y){

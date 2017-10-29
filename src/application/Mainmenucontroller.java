@@ -10,9 +10,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 public class Mainmenucontroller implements Initializable {
 	static String gridchoice="Grid1.fxml";
 	@FXML
@@ -21,14 +23,23 @@ public class Mainmenucontroller implements Initializable {
     private ResourceBundle resources;
 	@FXML
     private Slider no_of_players;
+	@FXML 
+	public static Button Resumegame;
 	static int playercount=2;
     @FXML
     private URL location;
+    public static Game g;
     @FXML
     void clicked(ActionEvent event) throws Exception {
+    	SettingsController.calldefault();
     	playercount=(int)no_of_players.getValue();
-    	Game g=new Game(playercount,gridchoice);
+    	g=new Game(playercount,gridchoice);
+    	for(int i=0;i<playercount;i++){
+    		g.players[i]=new Player(new color(SettingsController.values[i].getRed(),SettingsController.values[i].getGreen(),SettingsController.values[i].getBlue()));
+    	}
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(gridchoice));
+    	GridPane grid=(GridPane)page.getChildren().get(0);
+    	Gridcontroller.components.addAll(grid.getChildren());
     	rootpane.setBackground(null);
     	if(rootpane==null){
     		//System.out.println("fdfsf");

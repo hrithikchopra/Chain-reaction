@@ -1,6 +1,5 @@
 package application;
 import java.io.Serializable;
-import javafx.scene.paint.Color;
 
 public class Game implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -25,15 +24,17 @@ public class Game implements Serializable{
 }
 class Cell implements Serializable {
 	private static final long serialVersionUID = 1L;
-	Color currentcolor;
+	color currentcolor;
 	Player currentplayer;
+	int n_orbs;
 	public Cell(){
 		this.currentcolor=null;
 		this.currentplayer=null;
+		n_orbs=0;
 	}
 	public void setplayer(Player p){
 		this.currentplayer=p;
-		this.currentcolor=p.color;
+		this.currentcolor=p.Color;
 	}
 }
 class Grid implements Serializable {
@@ -41,10 +42,20 @@ class Grid implements Serializable {
 	Cell[][] grid;
 	public Grid(int c){
 		if(c==1){
-			grid=new Cell[5][9];
+			grid=new Cell[9][6];
+			for(int i=0;i<9;i++){
+				for(int j=0;j<6;j++){
+					grid[i][j]=new Cell();
+				}
+			}
 		}
 		else{
-			grid=new Cell[10][15];
+			grid=new Cell[15][10];
+			for(int i=0;i<15;i++){
+				for(int j=0;j<10;j++){
+					grid[i][j]=new Cell();
+				}
+			}
 		}
 	}
 }

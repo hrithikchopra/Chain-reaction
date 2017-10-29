@@ -1,4 +1,5 @@
 package application;
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,7 +13,10 @@ public class Mainmenu extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 	}
-	public static void main(String[] arg){
+	public static void main(String[] arg) throws IOException{
 		launch(arg);
-		}
+		System.out.println("Exit");
+		//Mainmenucontroller.serialize(Mainmenucontroller.g,"GAME.txt");
+		
+	}
 }

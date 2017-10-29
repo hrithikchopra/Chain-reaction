@@ -16,7 +16,7 @@ public class SettingsController {
     @FXML
     private AnchorPane root;
     @FXML
-    private ColorPicker color_p8,color_p7,color_p6,color_p5,color_p4,color_p3,color_p2,color_p1;
+    private static ColorPicker color_p8,color_p7,color_p6,color_p5,color_p4,color_p3,color_p2,color_p1;
     static Color[] values;
     static int counter=0;
     @FXML
@@ -42,10 +42,36 @@ public class SettingsController {
     		values=new Color[8];
     		for(int i=0;i<8;i++)
     			values[i]=new Color(0,0,0,0);
+    		color_p8=new ColorPicker();
+    		color_p7=new ColorPicker();
+    		color_p6=new ColorPicker();
+    		color_p5=new ColorPicker();
+    		color_p4=new ColorPicker();
+    		color_p3=new ColorPicker();
+    		color_p2=new ColorPicker();
+    		color_p1=new ColorPicker();
     		setdefaults();
     	}
     }
-    public void setdefaults(){
+    public static void calldefault(){
+    	if(counter==0)
+    	{
+    		values=new Color[8];
+    		for(int i=0;i<8;i++){
+    			values[i]=new Color(0,0,0,0);
+    		}
+    		color_p8=new ColorPicker();
+    		color_p7=new ColorPicker();
+    		color_p6=new ColorPicker();
+    		color_p5=new ColorPicker();
+    		color_p4=new ColorPicker();
+    		color_p3=new ColorPicker();
+    		color_p2=new ColorPicker();
+    		color_p1=new ColorPicker();
+    		setdefaults();
+    	}
+    }
+    public static void setdefaults(){
     	counter++;
     	color_p8.setValue(new Color(0,0,0,1.0));
     	color_p7.setValue(new Color(1.0,1.0,1.0,1.0));

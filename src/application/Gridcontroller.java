@@ -1,11 +1,12 @@
 package application;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,21 +29,32 @@ public class Gridcontroller implements Initializable {
 	@FXML
     private AnchorPane root;
 	@FXML
-	private GridPane gamegrid;
+	private GridPane gamegrid,gamegrid1;
     @FXML
     private ResourceBundle resources;
-
+	public static ObservableList<Node> components;
     @FXML
     private URL location;
     @FXML
     public void restartgame(ActionEvent event) throws Exception{
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(Mainmenucontroller.gridchoice));
+    	GridPane grid=(GridPane)page.getChildren().get(0);
+    	Gridcontroller.components.addAll(grid.getChildren());
     	root.setBackground(null);
+    	Mainmenucontroller.g=new Game(Mainmenucontroller.playercount,Mainmenucontroller.gridchoice);
+    	for(int i=0;i<Mainmenucontroller.playercount;i++){
+    		Mainmenucontroller.g.players[i]=new Player(new color(SettingsController.values[i].getRed(),SettingsController.values[i].getGreen(),SettingsController.values[i].getBlue()));
+    	}
     	if(root==null){
     		//System.out.println("fdfsf");
     	}
     	else
     		root.getChildren().setAll(page);
+    }
+    @FXML
+    public void undo(ActionEvent event){
+    	System.out.println("undo");
+    	gamegrid.getChildren().setAll(components);
     }
     @FXML
     void backtomenu(ActionEvent event) throws Exception{
@@ -75,14 +87,17 @@ public class Gridcontroller implements Initializable {
         	if(balls[rowIndex.intValue()][colIndex.intValue()]==k)
         		System.out.println("no more");
         	else{
-        	if(balls[rowIndex.intValue()][colIndex.intValue()]==0)
-        		addorb1(colIndex.intValue(),rowIndex.intValue());
-        	else if(balls[rowIndex.intValue()][colIndex.intValue()]==1)
-        		addorb2(colIndex.intValue(),rowIndex.intValue());
-        	else if(balls[rowIndex.intValue()][colIndex.intValue()]==2)
-        		addorb3(colIndex.intValue(),rowIndex.intValue());
-        	balls[rowIndex.intValue()][colIndex.intValue()]++;
+        		components.remove(0,components.size());
+            	components.addAll(gamegrid.getChildren());
+            	if(balls[rowIndex.intValue()][colIndex.intValue()]==0)
+            		addorb1(colIndex.intValue(),rowIndex.intValue());
+            	else if(balls[rowIndex.intValue()][colIndex.intValue()]==1)
+            		addorb2(colIndex.intValue(),rowIndex.intValue());
+            	else if(balls[rowIndex.intValue()][colIndex.intValue()]==2)
+            		addorb3(colIndex.intValue(),rowIndex.intValue());
+            	balls[rowIndex.intValue()][colIndex.intValue()]++;
         	}
+        	Mainmenucontroller.g.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].n_orbs=balls[rowIndex.intValue()][colIndex.intValue()];
         }
     }
     public void addorb1(int x,int y){
@@ -101,6 +116,18 @@ public class Gridcontroller implements Initializable {
         rotateTransition.setByAngle(360);
         rotateTransition.setCycleCount(Integer.MAX_VALUE);
         rotateTransition.play();
+        /*Line line=new Line();
+        line.setStartX(45.0f);
+        line.setStartY(0.0f);
+        line.setEndX(170.0f);
+        line.setEndY(0.0f);
+        PathTransition pathTransition = new PathTransition(); 
+        pathTransition.setDuration(Duration.millis(1000));
+         pathTransition.setInterpolator(Interpolator.LINEAR);
+         pathTransition.setPath(line);
+         pathTransition.setNode(s);
+         pathTransition.setCycleCount(1);
+         pathTransition.play(); */
     }
     public void addorb2(int x,int y){
     	Sphere s=new Sphere(10);
@@ -145,7 +172,7 @@ public class Gridcontroller implements Initializable {
     }
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		// TODO Auto-generated method stub
 		balls=new int[9][6];
-		}
+		components = FXCollections.observableArrayList();
+	}
 }
