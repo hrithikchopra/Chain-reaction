@@ -5,13 +5,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +20,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Circle;
@@ -37,14 +37,15 @@ public class Gridcontroller implements Initializable {
 	private GridPane gamegrid,gamegrid1;
     @FXML
     private ResourceBundle resources;
-	public static ObservableList<Node> components;
+	public static Pane p;
+	public static boolean allowundo=true;
     @FXML
     private URL location;
     @FXML
+    private List<Pane> labelList;
+    @FXML
     public void restartgame(ActionEvent event) throws Exception{
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(Mainmenucontroller.gridchoice));
-    	GridPane grid=(GridPane)page.getChildren().get(0);
-    	Gridcontroller.components.addAll(grid.getChildren());
     	root.setBackground(null);
     	Mainmenucontroller.g=new Game(Mainmenucontroller.playercount,Mainmenucontroller.gridchoice);
     	for(int i=0;i<Mainmenucontroller.playercount;i++){
@@ -59,8 +60,12 @@ public class Gridcontroller implements Initializable {
     @FXML
     public void undo(ActionEvent event) throws ClassNotFoundException, IOException{
     	System.out.println("undo");
-    	gamegrid.getChildren().setAll(components);
+    	int x=GridPane.getRowIndex(p); int y=GridPane.getColumnIndex(p);
+    	int index= balls[x][y];
+    	if(allowundo)
+    		p.getChildren().remove(index-1);
     	balls=restoregrid();
+    	allowundo=false;
     }
     @FXML
     void backtomenu(ActionEvent event) throws Exception{
@@ -93,9 +98,8 @@ public class Gridcontroller implements Initializable {
         	if(balls[rowIndex.intValue()][colIndex.intValue()]==k)
         		System.out.println("no more");
         	else{
-        		components.remove(0,components.size());
-            	components.addAll(gamegrid.getChildren());
             	savegrid();
+            	allowundo=true;
             	if(balls[rowIndex.intValue()][colIndex.intValue()]==0)
             		addorb1(colIndex.intValue(),rowIndex.intValue());
             	else if(balls[rowIndex.intValue()][colIndex.intValue()]==1)
@@ -114,8 +118,12 @@ public class Gridcontroller implements Initializable {
     	PhongMaterial pm=new PhongMaterial();
     	pm.setDiffuseColor(Color.LIME);
     	s.setMaterial(pm);
-    	gamegrid.add(s,x,y);
-    	s.setTranslateX(45);
+    	Pane edit=labelList.get(6*y+x);
+    	edit.getChildren().add(s);
+    	p=edit;
+    	//gamegrid.add(edit,x,y);
+    	s.setTranslateX(55);
+    	s.setTranslateY(30);
         RotateTransition rotateTransition = new RotateTransition(); 
     	rotateTransition.setAxis(Rotate.Z_AXIS);
         rotateTransition.setDuration(Duration.millis(1000)); 
@@ -143,9 +151,13 @@ public class Gridcontroller implements Initializable {
     	PhongMaterial pm=new PhongMaterial();
     	pm.setDiffuseColor(Color.LIME);
     	s.setMaterial(pm);
-    	gamegrid.add(s,x,y);
-    	s.setTranslateX(30);
-        Circle path=new Circle(44,6.5,14.4);
+    	Pane edit=labelList.get(6*y+x);
+    	edit.getChildren().add(s);
+    	p=edit;
+    	//gamegrid.add(s,x,y);
+    	s.setTranslateX(40);
+    	s.setTranslateY(30);
+        Circle path=new Circle(54,30,14.4);
         PathTransition pathTransition = new PathTransition(); 
         pathTransition.setDuration(Duration.millis(5000));
        // pathTransition.setDelay(Duration.ZERO);
@@ -161,10 +173,13 @@ public class Gridcontroller implements Initializable {
     	PhongMaterial pm=new PhongMaterial();
     	pm.setDiffuseColor(Color.LIME);
     	s.setMaterial(pm);
-    	gamegrid.add(s,x,y);
-    	s.setTranslateX(33);
-    	s.setTranslateY(-10);
-        Circle path=new Circle(44,-6.5,12.4);
+    	Pane edit=labelList.get(6*y+x);
+    	p=edit;
+    	edit.getChildren().add(s);
+    	//gamegrid.add(s,x,y);
+    	s.setTranslateX(43);
+    	s.setTranslateY(20);
+        Circle path=new Circle(54,30,12.4);
         PathTransition pathTransition = new PathTransition(); 
         pathTransition.setDuration(Duration.millis(5000));
         //pathTransition.setDelay(Duration.ZERO);
@@ -202,6 +217,5 @@ public class Gridcontroller implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		balls=new int[9][6];
-		components = FXCollections.observableArrayList();
 	}
 }

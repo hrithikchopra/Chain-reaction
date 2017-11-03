@@ -7,6 +7,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.GridPane?>
+<?import java.util.*?>
 
 <AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="800.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Gridcontroller">
    <children>
@@ -31,61 +32,118 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="0" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="0" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="2" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="3" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="4" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="5" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="5" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="6" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="6" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="6" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="7" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="7" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="7" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="8" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="8" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="8" />
-<Pane prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="8" />
-
+<Pane fx:id="label00" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+<Pane fx:id="label01" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+<Pane fx:id="label02" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+<Pane fx:id="label03" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+<Pane fx:id="label04" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+<Pane fx:id="label05" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="0" />
+<Pane fx:id="label10" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+<Pane fx:id="label11" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+<Pane fx:id="label12" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+<Pane fx:id="label13" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+<Pane fx:id="label14" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+<Pane fx:id="label15" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+<Pane fx:id="label20" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+<Pane fx:id="label21" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+<Pane fx:id="label22" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+<Pane fx:id="label23" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+<Pane fx:id="label24" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+<Pane fx:id="label25" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="2" />
+<Pane fx:id="label30" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+<Pane fx:id="label31" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+<Pane fx:id="label32" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+<Pane fx:id="label33" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+<Pane fx:id="label34" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+<Pane fx:id="label35" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="3" />
+<Pane fx:id="label40" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+<Pane fx:id="label41" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+<Pane fx:id="label42" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+<Pane fx:id="label43" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+<Pane fx:id="label44" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+<Pane fx:id="label45" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+<Pane fx:id="label50" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+<Pane fx:id="label51" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+<Pane fx:id="label52" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+<Pane fx:id="label53" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+<Pane fx:id="label54" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+<Pane fx:id="label55" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="5" />
+<Pane fx:id="label60" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+<Pane fx:id="label61" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+<Pane fx:id="label62" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+<Pane fx:id="label63" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+<Pane fx:id="label64" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+<Pane fx:id="label65" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="6" />
+<Pane fx:id="label70" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="7" />
+<Pane fx:id="label71" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+<Pane fx:id="label72" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+<Pane fx:id="label73" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+<Pane fx:id="label74" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="7" />
+<Pane fx:id="label75" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="7" />
+<Pane fx:id="label80" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+<Pane fx:id="label81" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+<Pane fx:id="label82" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+<Pane fx:id="label83" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+<Pane fx:id="label84" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="4" GridPane.rowIndex="8" />
+<Pane fx:id="label85" prefHeight="51.0" prefWidth="83.0" GridPane.columnIndex="5" GridPane.rowIndex="8" />
+<fx:define>
+    <ArrayList fx:id="labelList">
+<fx:reference source="label00" /> 
+<fx:reference source="label01" /> 
+<fx:reference source="label02" /> 
+<fx:reference source="label03" /> 
+<fx:reference source="label04" /> 
+<fx:reference source="label05" /> 
+<fx:reference source="label10" /> 
+<fx:reference source="label11" /> 
+<fx:reference source="label12" /> 
+<fx:reference source="label13" /> 
+<fx:reference source="label14" /> 
+<fx:reference source="label15" /> 
+<fx:reference source="label20" /> 
+<fx:reference source="label21" /> 
+<fx:reference source="label22" /> 
+<fx:reference source="label23" /> 
+<fx:reference source="label24" /> 
+<fx:reference source="label25" /> 
+<fx:reference source="label30" /> 
+<fx:reference source="label31" /> 
+<fx:reference source="label32" /> 
+<fx:reference source="label33" /> 
+<fx:reference source="label34" /> 
+<fx:reference source="label35" /> 
+<fx:reference source="label40" /> 
+<fx:reference source="label41" /> 
+<fx:reference source="label42" /> 
+<fx:reference source="label43" /> 
+<fx:reference source="label44" /> 
+<fx:reference source="label45" /> 
+<fx:reference source="label50" /> 
+<fx:reference source="label51" /> 
+<fx:reference source="label52" /> 
+<fx:reference source="label53" /> 
+<fx:reference source="label54" /> 
+<fx:reference source="label55" /> 
+<fx:reference source="label60" /> 
+<fx:reference source="label61" /> 
+<fx:reference source="label62" /> 
+<fx:reference source="label63" /> 
+<fx:reference source="label64" /> 
+<fx:reference source="label65" /> 
+<fx:reference source="label70" /> 
+<fx:reference source="label71" /> 
+<fx:reference source="label72" /> 
+<fx:reference source="label73" /> 
+<fx:reference source="label74" /> 
+<fx:reference source="label75" /> 
+<fx:reference source="label80" /> 
+<fx:reference source="label81" /> 
+<fx:reference source="label82" /> 
+<fx:reference source="label83" /> 
+<fx:reference source="label84" /> 
+<fx:reference source="label85" /> 
+    </ArrayList>
+</fx:define>
          </children>
       </GridPane>
       <Button layoutX="76.0" layoutY="2.0" mnemonicParsing="false" onAction="#backtomenu" text="main menu" />

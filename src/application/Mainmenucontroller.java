@@ -39,9 +39,7 @@ public class Mainmenucontroller implements Initializable {
     	}
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(gridchoice));
     	GridPane grid=(GridPane)page.getChildren().get(0);
-    	if(gridchoice.equals("Grid1.fxml"))
-    		Gridcontroller.components.addAll(grid.getChildren());
-    	else
+    	if(gridchoice.equals("Grid2.fxml"))
     		Gridcontroller2.components.addAll(grid.getChildren());
     	rootpane.setBackground(null);
     	if(rootpane==null){
