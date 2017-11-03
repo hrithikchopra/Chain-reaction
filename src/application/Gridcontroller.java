@@ -77,7 +77,7 @@ public class Gridcontroller implements Initializable {
     		return 3;
     }
     @FXML
-    private void mouseEntered(MouseEvent e) throws OrbOverloadException {
+    private void useraddorb(MouseEvent e) throws OrbOverloadException {
     	Node target = (Node) e.getTarget();
         Integer colIndex = GridPane.getColumnIndex(target);
         Integer rowIndex = GridPane.getRowIndex(target);

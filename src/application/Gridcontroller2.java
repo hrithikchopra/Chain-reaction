@@ -65,7 +65,7 @@ public class Gridcontroller2 implements Initializable {
     		return 3;
     }
     @FXML
-    private void mouseEntered(MouseEvent e) {
+    private void useraddorb(MouseEvent e) {
     	Node target = (Node) e.getTarget();
         Integer colIndex = GridPane.getColumnIndex(target);
         Integer rowIndex = GridPane.getRowIndex(target);

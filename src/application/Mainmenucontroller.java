@@ -30,7 +30,7 @@ public class Mainmenucontroller implements Initializable {
     private URL location;
     public static Game g;
     @FXML
-    void clicked(ActionEvent event) throws Exception {
+    void StartGame(ActionEvent event) throws Exception {
     	SettingsController.calldefault();
     	playercount=(int)no_of_players.getValue();
     	g=new Game(playercount,gridchoice);
@@ -48,15 +48,15 @@ public class Mainmenucontroller implements Initializable {
     		rootpane.getChildren().setAll(page);
     }
     @FXML
-    void itemclicked(ActionEvent event){
+    void gridselection1(ActionEvent event){
     	gridchoice="Grid1.fxml";
     }
     @FXML
-    void itemclicked2(ActionEvent event){
+    void gridselection2(ActionEvent event){
     	gridchoice="Grid2.fxml";
     }
     @FXML
-    public void settingsclicked(ActionEvent event) throws Exception {
+    public void ClickedSettings(ActionEvent event) throws Exception {
     	playercount=(int)no_of_players.getValue();
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Settings.fxml"));
     	rootpane.setBackground(null);

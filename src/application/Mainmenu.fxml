@@ -9,7 +9,7 @@
 <AnchorPane fx:id="rootpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="800.0" style="-fx-background-image: url('file:/home/hrithik/workspace/Chain_Reaction/unnamed.png');" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Mainmenucontroller">
    <children>
       <Slider fx:id="no_of_players" layoutX="88.0" layoutY="292.0" majorTickUnit="1.0" max="8.0" min="2.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" />
-      <Button layoutX="356.0" layoutY="146.0" mnemonicParsing="false" onAction="#clicked" prefHeight="34.0" prefWidth="88.0" text="Play Game" />
+      <Button layoutX="356.0" layoutY="146.0" mnemonicParsing="false" onAction="#StartGame" prefHeight="34.0" prefWidth="88.0" text="Play Game" />
       <MenuBar layoutY="-1.0" prefHeight="25.0" prefWidth="800.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
@@ -33,14 +33,14 @@
               <menus>
                 <Menu mnemonicParsing="false" text="Grid Size">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#itemclicked" text="9X6" />
-                        <MenuItem mnemonicParsing="false" onAction="#itemclicked2" text="15X10" />
+                    <MenuItem mnemonicParsing="false" onAction="#gridselection1" text="9X6" />
+                        <MenuItem mnemonicParsing="false" onAction="#gridselection2" text="15X10" />
                   </items>
                 </Menu>
               </menus>
             </MenuBar>
          </children>
       </AnchorPane>
-      <Button layoutX="669.0" layoutY="441.0" mnemonicParsing="false" onAction="#settingsclicked" opacity="0.51" prefHeight="25.0" prefWidth="88.0" text="Settings" />
+      <Button layoutX="669.0" layoutY="441.0" mnemonicParsing="false" onAction="#ClickedSettings" opacity="0.51" prefHeight="25.0" prefWidth="88.0" text="Settings" />
    </children>
 </AnchorPane>
