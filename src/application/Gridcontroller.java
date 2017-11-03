@@ -1,4 +1,9 @@
 package application;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.animation.Interpolator;
@@ -52,9 +57,10 @@ public class Gridcontroller implements Initializable {
     		root.getChildren().setAll(page);
     }
     @FXML
-    public void undo(ActionEvent event){
+    public void undo(ActionEvent event) throws ClassNotFoundException, IOException{
     	System.out.println("undo");
     	gamegrid.getChildren().setAll(components);
+    	balls=restoregrid();
     }
     @FXML
     void backtomenu(ActionEvent event) throws Exception{
@@ -77,7 +83,7 @@ public class Gridcontroller implements Initializable {
     		return 3;
     }
     @FXML
-    private void useraddorb(MouseEvent e) throws OrbOverloadException {
+    private void useraddorb(MouseEvent e) throws OrbOverloadException, IOException {
     	Node target = (Node) e.getTarget();
         Integer colIndex = GridPane.getColumnIndex(target);
         Integer rowIndex = GridPane.getRowIndex(target);
@@ -89,6 +95,7 @@ public class Gridcontroller implements Initializable {
         	else{
         		components.remove(0,components.size());
             	components.addAll(gamegrid.getChildren());
+            	savegrid();
             	if(balls[rowIndex.intValue()][colIndex.intValue()]==0)
             		addorb1(colIndex.intValue(),rowIndex.intValue());
             	else if(balls[rowIndex.intValue()][colIndex.intValue()]==1)
@@ -96,8 +103,9 @@ public class Gridcontroller implements Initializable {
             	else if(balls[rowIndex.intValue()][colIndex.intValue()]==2)
             		addorb3(colIndex.intValue(),rowIndex.intValue());
             	balls[rowIndex.intValue()][colIndex.intValue()]++;
+            	Mainmenucontroller.g.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].n_orbs=balls[rowIndex.intValue()][colIndex.intValue()];
         	}
-        	Mainmenucontroller.g.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].n_orbs=balls[rowIndex.intValue()][colIndex.intValue()];
+        	
         }
     }
     public void addorb1(int x,int y){
@@ -166,6 +174,27 @@ public class Gridcontroller implements Initializable {
         pathTransition.setCycleCount(Timeline.INDEFINITE);
         pathTransition.play();
     }
+    public static void savegrid() throws IOException {
+		ObjectOutputStream out=null;
+		try{
+			out=new ObjectOutputStream(new FileOutputStream("grid1state.txt"));
+			out.writeObject(balls);
+		}
+		finally{
+			out.close();
+		}
+	}
+	public static int[][] restoregrid() throws IOException, ClassNotFoundException {
+		ObjectInputStream in=null;
+		try{
+			in=new ObjectInputStream(new FileInputStream("grid1state.txt"));
+			int[][] g=(int[][])in.readObject();
+			return g;
+		}
+		finally{
+			in.close();
+		}
+	}
     @FXML
     void initialize() {
     	
