@@ -10,6 +10,8 @@ import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -35,7 +37,7 @@ public class Gridcontroller2 implements Initializable {
 	private GridPane gamegrid;
     @FXML
     private ResourceBundle resources;
-
+	public static ObservableList<Node> components;
     @FXML
     private URL location;
     @FXML
@@ -61,6 +63,12 @@ public class Gridcontroller2 implements Initializable {
     	else
     		root.getChildren().setAll(page);
     }
+    @FXML
+    public void undo(ActionEvent event) throws Exception{
+    	System.out.println("undo");
+    	gamegrid.getChildren().setAll(components);
+    	balls=restoregrid();
+    }
     int calculatecriticalmass(int x,int y){
     	if(x==0 && y==0 || x==9 && y==14 || x==9 && y==0 || x==0 && y==14)
     		return 1;
@@ -70,7 +78,7 @@ public class Gridcontroller2 implements Initializable {
     		return 3;
     }
     @FXML
-    private void useraddorb(MouseEvent e) {
+    private void useraddorb(MouseEvent e) throws IOException {
     	Node target = (Node) e.getTarget();
         Integer colIndex = GridPane.getColumnIndex(target);
         Integer rowIndex = GridPane.getRowIndex(target);
@@ -80,14 +88,17 @@ public class Gridcontroller2 implements Initializable {
         	if(balls[rowIndex.intValue()][colIndex.intValue()]==k)
         		System.out.println("no more");
         	else{
-        	if(balls[rowIndex.intValue()][colIndex.intValue()]==0)
-        		addorb1(colIndex.intValue(),rowIndex.intValue());
-        	else if(balls[rowIndex.intValue()][colIndex.intValue()]==1)
-        		addorb2(colIndex.intValue(),rowIndex.intValue());
-        	else if(balls[rowIndex.intValue()][colIndex.intValue()]==2)
-        		addorb3(colIndex.intValue(),rowIndex.intValue());
-        	balls[rowIndex.intValue()][colIndex.intValue()]++;
-        	Mainmenucontroller.g.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].n_orbs=balls[rowIndex.intValue()][colIndex.intValue()];
+        		components.remove(0,components.size());
+            	components.addAll(gamegrid.getChildren());
+            	savegrid();
+            	if(balls[rowIndex.intValue()][colIndex.intValue()]==0)
+            		addorb1(colIndex.intValue(),rowIndex.intValue());
+            	else if(balls[rowIndex.intValue()][colIndex.intValue()]==1)
+            		addorb2(colIndex.intValue(),rowIndex.intValue());
+            	else if(balls[rowIndex.intValue()][colIndex.intValue()]==2)
+            		addorb3(colIndex.intValue(),rowIndex.intValue());
+            	balls[rowIndex.intValue()][colIndex.intValue()]++;
+            	Mainmenucontroller.g.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].n_orbs=balls[rowIndex.intValue()][colIndex.intValue()];
         	}
         }
     }
@@ -148,7 +159,7 @@ public class Gridcontroller2 implements Initializable {
     public static void savegrid() throws IOException {
 		ObjectOutputStream out=null;
 		try{
-			out=new ObjectOutputStream(new FileOutputStream("grid1state.txt"));
+			out=new ObjectOutputStream(new FileOutputStream("grid2state.txt"));
 			out.writeObject(balls);
 		}
 		finally{
@@ -158,7 +169,7 @@ public class Gridcontroller2 implements Initializable {
 	public static int[][] restoregrid() throws IOException, ClassNotFoundException {
 		ObjectInputStream in=null;
 		try{
-			in=new ObjectInputStream(new FileInputStream("grid1state.txt"));
+			in=new ObjectInputStream(new FileInputStream("grid2state.txt"));
 			int[][] g=(int[][])in.readObject();
 			return g;
 		}
@@ -172,7 +183,7 @@ public class Gridcontroller2 implements Initializable {
     }
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		// TODO Auto-generated method stub
 		balls=new int[15][10];
+		components = FXCollections.observableArrayList();
 		}
 }
