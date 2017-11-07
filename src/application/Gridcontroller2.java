@@ -13,6 +13,7 @@ import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -25,6 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.DrawMode;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
@@ -35,6 +37,7 @@ public class Gridcontroller2 implements Initializable {
     private AnchorPane root;
 	@FXML
 	private GridPane gamegrid;
+	public Sphere[][] alpha;
     @FXML
     private ResourceBundle resources;
 	public static ObservableList<Node> components;
@@ -78,15 +81,20 @@ public class Gridcontroller2 implements Initializable {
     		return 3;
     }
     @FXML
-    private void useraddorb(MouseEvent e) throws IOException {
-    	Node target = (Node) e.getTarget();
+    private void useraddorb(MouseEvent e) throws IOException{
+    	Node target = (Node) e.getTarget();    	
         Integer colIndex = GridPane.getColumnIndex(target);
         Integer rowIndex = GridPane.getRowIndex(target);
         if (colIndex == null || rowIndex == null) {
         } else {
         	int k=calculatecriticalmass(colIndex.intValue(),rowIndex.intValue());
-        	if(balls[rowIndex.intValue()][colIndex.intValue()]==k)
-        		System.out.println("no more");
+        	if(balls[rowIndex.intValue()][colIndex.intValue()]==k){
+        		components.remove(0,components.size());
+            	components.addAll(gamegrid.getChildren());
+            	savegrid();
+        		split(colIndex.intValue(),rowIndex.intValue());
+            	balls[rowIndex.intValue()][colIndex.intValue()]=0;
+        	}
         	else{
         		components.remove(0,components.size());
             	components.addAll(gamegrid.getChildren());
@@ -102,12 +110,30 @@ public class Gridcontroller2 implements Initializable {
         	}
         }
     }
+    void useraddorb(int x,int y){
+    	int k=calculatecriticalmass(x,y);
+    	if(balls[y][x]==k){
+    		split(x,y);
+        	balls[y][x]=0;
+    	}
+    	else{
+        	if(balls[y][x]==0)
+        		addorb1(x,y);
+        	else if(balls[y][x]==1)
+        		addorb2(x,y);
+        	else if(balls[y][x]==2)
+        		addorb3(x,y);
+        	balls[y][x]++;
+        	Mainmenucontroller.g.gamegrid.grid[y][x].n_orbs=balls[y][x];
+    	}
+    }
     public void addorb1(int x,int y){
     	Sphere s=new Sphere(8);
     	s.setDrawMode(DrawMode.LINE);
     	PhongMaterial pm=new PhongMaterial();
     	pm.setDiffuseColor(Color.LIME);
     	s.setMaterial(pm);
+    	alpha[y*10+x][0]=s;
     	gamegrid.add(s,x,y);
     	s.setTranslateX(40);
         RotateTransition rotateTransition = new RotateTransition(); 
@@ -117,7 +143,7 @@ public class Gridcontroller2 implements Initializable {
         rotateTransition.setRate(10);
         rotateTransition.setByAngle(360);
         rotateTransition.setCycleCount(Integer.MAX_VALUE);
-        rotateTransition.play();
+        rotateTransition.play(); 
     }
     public void addorb2(int x,int y){
     	Sphere s=new Sphere(8);
@@ -125,6 +151,7 @@ public class Gridcontroller2 implements Initializable {
     	PhongMaterial pm=new PhongMaterial();
     	pm.setDiffuseColor(Color.LIME);
     	s.setMaterial(pm);
+    	alpha[y*10+x][1]=s;
     	gamegrid.add(s,x,y);
     	s.setTranslateX(25);
         Circle path=new Circle(39,6.5,10.4);
@@ -143,6 +170,9 @@ public class Gridcontroller2 implements Initializable {
     	PhongMaterial pm=new PhongMaterial();
     	pm.setDiffuseColor(Color.LIME);
     	s.setMaterial(pm);
+    	alpha[y*10+x][2]=s;
+    	gamegrid.getChildren().remove(alpha[y*10+x][1]);
+    	addorb2(x,y);
     	gamegrid.add(s,x,y);
     	s.setTranslateX(30);
     	s.setTranslateY(-5);
@@ -155,6 +185,189 @@ public class Gridcontroller2 implements Initializable {
         pathTransition.setNode(s);
         pathTransition.setCycleCount(Timeline.INDEFINITE);
         pathTransition.play();
+    }
+    public void split(int x,int y){
+    	int k=calculatecriticalmass(x,y);
+    	PhongMaterial pm=new PhongMaterial();
+    	switch(k){
+    	case 1:
+    		gamegrid.getChildren().remove(alpha[y*10+x][0]);
+    		Sphere s=new Sphere(8);
+        	s.setDrawMode(DrawMode.LINE);
+        	pm.setDiffuseColor(Color.LIME);
+        	s.setMaterial(pm);
+        	gamegrid.add(s,x,y);
+        	s.setTranslateX(25);
+        	Sphere n=new Sphere(8);
+        	n.setDrawMode(DrawMode.LINE);
+        	n.setMaterial(pm);
+        	gamegrid.add(n,x,y);
+        	s.setTranslateX(27);
+        	if(x==0 && y==0){
+        		goright(s,x+1,y); godown(n,x,y+1);
+        	}
+        	else if(x==9 && y==0){
+        		goleft(s,x-1,y); godown(n,x,y+1);
+        	}
+        	else if(x==0 && y==14){
+        		goright(s,x+1,y); goUp(n,x,y-1);
+        	}
+        	else{
+        		goleft(s,x-1,y); goUp(n,x,y-1);
+        	}
+    		break;
+    	case 2:
+    		gamegrid.getChildren().remove(alpha[y*10+x][0]);
+    		gamegrid.getChildren().remove(alpha[y*10+x][1]);
+    		Sphere n1=new Sphere(8);
+        	n1.setDrawMode(DrawMode.LINE);
+        	pm.setDiffuseColor(Color.LIME);
+        	n1.setMaterial(pm);
+        	gamegrid.add(n1,x,y);
+        	n1.setTranslateX(25);
+        	Sphere n2=new Sphere(8);
+        	n2.setDrawMode(DrawMode.LINE);
+        	n2.setMaterial(pm);
+        	gamegrid.add(n2,x,y);
+        	n2.setTranslateX(27);
+        	Sphere n3=new Sphere(8);
+        	n3.setDrawMode(DrawMode.LINE);
+        	n3.setMaterial(pm);
+        	gamegrid.add(n3,x,y);
+        	n3.setTranslateX(24);
+        	if(x==0){
+        		godown(n1,x,y+1);goright(n2,x+1,y); goUp(n3,x,y-1);
+        	}
+        	else if(x==9){
+        		godown(n1,x,y+1); goleft(n2,x-1,y); goUp(n3,x,y-1);
+        	}
+        	else if(y==0){
+        		goleft(n1,x-1,y); goright(n2,x+1,y); godown(n3,x,y+1);
+        	}
+        	else{
+        		goleft(n1,x-1,y); goright(n2,x+1,y); goUp(n3,x,y-1);
+        	}
+    		break;
+    	case 3:
+    		gamegrid.getChildren().remove(alpha[y*10+x][0]);
+    		gamegrid.getChildren().remove(alpha[y*10+x][1]);
+    		gamegrid.getChildren().remove(alpha[y*10+x][2]);
+    		Sphere s1=new Sphere(8);
+        	s1.setDrawMode(DrawMode.LINE);
+        	pm.setDiffuseColor(Color.LIME);
+        	s1.setMaterial(pm);
+        	gamegrid.add(s1,x,y);
+        	s1.setTranslateX(25);
+        	Sphere s2=new Sphere(8);
+        	s2.setDrawMode(DrawMode.LINE);
+        	s2.setMaterial(pm);
+        	gamegrid.add(s2,x,y);
+        	s2.setTranslateX(27);
+        	Sphere s3=new Sphere(8);
+        	s3.setDrawMode(DrawMode.LINE);
+        	s3.setMaterial(pm);
+        	gamegrid.add(s3,x,y);
+        	s1.setTranslateX(25);
+        	Sphere s4=new Sphere(8);
+        	s4.setDrawMode(DrawMode.LINE);
+        	s4.setMaterial(pm);
+        	gamegrid.add(s4,x,y);
+        	s4.setTranslateX(25);
+        	s4.setTranslateY(-3);
+    		godown(s1,x,y+1);
+    		goleft(s2,x-1,y);
+    		goright(s3,x+1,y);
+    		goUp(s4,x,y-1);
+    		break;
+    	}
+    }
+    void goright(Sphere s,int x,int y){
+    	Line line=new Line();
+        line.setStartX(45.0f);
+        line.setStartY(0.0f);
+        line.setEndX(105.0f);
+        line.setEndY(0.0f);
+        PathTransition pathTransition = new PathTransition(); 
+        pathTransition.setDuration(Duration.millis(100));
+        pathTransition.setInterpolator(Interpolator.LINEAR);
+       // pathTransition.setRate(100); 
+        pathTransition.setPath(line);
+        pathTransition.setNode(s);
+        pathTransition.setCycleCount(1);
+        pathTransition.play();
+        pathTransition.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+            	gamegrid.getChildren().remove(s);                                                                     
+					useraddorb(x,y);
+            }
+        });
+    }
+    void goleft(Sphere s,int x,int y){
+    	Line line=new Line();
+        line.setStartX(45.0f);
+        line.setStartY(0.0f);
+        line.setEndX(-50.0f);
+        line.setEndY(0.0f);
+        PathTransition pathTransition = new PathTransition(); 
+        pathTransition.setDuration(Duration.millis(100));
+        pathTransition.setInterpolator(Interpolator.LINEAR);
+       // pathTransition.setRate(100); 
+        pathTransition.setPath(line);
+        pathTransition.setNode(s);
+        pathTransition.setCycleCount(1);
+        pathTransition.play();
+        pathTransition.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+            	gamegrid.getChildren().remove(s);                                                                     
+					useraddorb(x,y);
+            }
+        });
+    }
+    void godown(Sphere s,int x,int y){
+    	Line line=new Line();
+        line.setStartX(45.0f);
+        line.setStartY(0.0f);
+        line.setEndX(45.0f);
+        line.setEndY(40.0f);
+        PathTransition pathTransition = new PathTransition(); 
+        pathTransition.setDuration(Duration.millis(100));
+        pathTransition.setInterpolator(Interpolator.LINEAR);
+       // pathTransition.setRate(100); 
+        pathTransition.setPath(line);
+        pathTransition.setNode(s);
+        pathTransition.setCycleCount(1);
+        pathTransition.play();
+        pathTransition.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+            	gamegrid.getChildren().remove(s);                                                                     
+					useraddorb(x,y);
+            }
+        });
+    }
+	void goUp(Sphere s,int x,int y){
+		Line line=new Line();
+        line.setStartX(45.0f);
+        line.setStartY(0.0f);
+        line.setEndX(45.0f);
+        line.setEndY(-40.0f);
+        PathTransition pathTransition = new PathTransition(); 
+        pathTransition.setDuration(Duration.millis(100));
+        pathTransition.setInterpolator(Interpolator.LINEAR);
+       // pathTransition.setRate(100); 
+        pathTransition.setPath(line);
+        pathTransition.setNode(s);
+        pathTransition.setCycleCount(1);
+        pathTransition.play();
+        pathTransition.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+            	gamegrid.getChildren().remove(s);                                                                     
+					useraddorb(x,y);
+            }
+        });
     }
     public static void savegrid() throws IOException {
 		ObjectOutputStream out=null;
@@ -184,6 +397,7 @@ public class Gridcontroller2 implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		balls=new int[15][10];
+		alpha=new Sphere[150][3];
 		components = FXCollections.observableArrayList();
 		}
 }
