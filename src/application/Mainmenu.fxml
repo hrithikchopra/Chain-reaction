@@ -8,6 +8,7 @@
 
 <AnchorPane fx:id="rootpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="800.0" style="-fx-background-image: url('file:/home/hrithik/workspace/Chain_Reaction/unnamed.png');" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Mainmenucontroller">
    <children>
+      <Button fx:id="Resumegame" layoutX="366.0" layoutY="197.0" mnemonicParsing="false" onAction="#Resume" text="Resume" />
       <Slider fx:id="no_of_players" layoutX="88.0" layoutY="292.0" majorTickUnit="1.0" max="8.0" min="2.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" />
       <Button layoutX="356.0" layoutY="146.0" mnemonicParsing="false" onAction="#StartGame" prefHeight="34.0" prefWidth="88.0" text="Play Game" />
       <MenuBar layoutY="-1.0" prefHeight="25.0" prefWidth="800.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -25,7 +26,6 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Button fx:id="Resumegame" disable="true" layoutX="366.0" layoutY="197.0" mnemonicParsing="false" text="Resume" />
       <Label layoutX="126.0" layoutY="337.0" prefHeight="16.0" prefWidth="63.0" style="-fx-font-weight: bold;" text="Players" />
       <AnchorPane layoutX="554.0" layoutY="288.0" prefHeight="38.0" prefWidth="103.0" style="-fx-border-style: null;">
          <children>

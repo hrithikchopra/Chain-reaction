@@ -16,7 +16,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 public class Mainmenucontroller implements Initializable {
-	static String gridchoice="Grid1.fxml";
+	static String gridchoice="Grid2.fxml";
 	@FXML
     private AnchorPane rootpane;
 	@FXML
@@ -24,23 +24,78 @@ public class Mainmenucontroller implements Initializable {
 	@FXML
     private Slider no_of_players;
 	@FXML 
-	public static Button Resumegame;
+	private Button Resumegame;
 	static int playercount=2;
     @FXML
     private URL location;
     public static Game g;
     @FXML
+    void Resume(ActionEvent event) throws Exception{
+    	Game old=deserialize("GAME.txt");
+    	if(old.gridsize.equals("Grid1.fxml"))
+    		Build1(old);
+    	else
+    		Build2(old);
+    }
+    private void Build2(Game old) throws Exception {
+    	//Gridcontroller2 h=new Gridcontroller2();
+    	gridchoice=old.gridsize;
+    	//h.initialize();
+    	playercount=old.no_of_players;
+    	g=old;
+    	Gridcontroller2.resume=true;
+    	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(gridchoice));
+    	rootpane.setBackground(null);
+    	if(rootpane==null){
+    		//System.out.println("fdfsf");
+    	}
+    	else
+    		rootpane.getChildren().setAll(page);
+	}
+    private void Build1(Game old) throws Exception {
+    	Gridcontroller1 h=new Gridcontroller1();
+    	gridchoice=old.gridsize;
+    	h.initialize();
+    	playercount=old.no_of_players;
+    	g=old;
+    	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(gridchoice));
+    	h.gamegrid=(GridPane)page.getChildren().get(0);
+    	Gridcontroller2.balls=Gridcontroller2.restoregrid();    	
+    	for(int i=0;i<15;i++){
+    		for(int j=0;j<10;j++){
+    			int n=Gridcontroller2.balls[i][j];
+    			switch(n){
+    			case 1:
+    				h.addorb1(j,i);
+    				break;
+    			case 2:
+    				h.addorb1(j,i);
+    				h.addorb2(j,i);
+    				break;
+    			case 3:
+    				h.addorb1(j,i);
+    				h.addorb2(j,i);
+    				h.addorb3(j,i);
+    				break;
+    			}
+    		}
+    	}
+    	rootpane.setBackground(null);
+    	if(rootpane==null){
+    		//System.out.println("fdfsf");
+    	}
+    	else
+    		rootpane.getChildren().setAll(page);
+	}
+	@FXML
     void StartGame(ActionEvent event) throws Exception {
     	SettingsController.calldefault();
     	playercount=(int)no_of_players.getValue();
     	g=new Game(playercount,gridchoice);
     	for(int i=0;i<playercount;i++){
-    		g.players[i]=new Player(new color(SettingsController.values[i].getRed(),SettingsController.values[i].getGreen(),SettingsController.values[i].getBlue()));
+    		g.players.add(new Player(new color(SettingsController.values[i].getRed(),SettingsController.values[i].getGreen(),SettingsController.values[i].getBlue()),i));
     	}
-    	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(gridchoice));
-    	GridPane grid=(GridPane)page.getChildren().get(0);
-    	if(gridchoice.equals("Grid2.fxml"))
-    		Gridcontroller2.components.addAll(grid.getChildren());
+    	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(gridchoice));    	
     	rootpane.setBackground(null);
     	if(rootpane==null){
     		//System.out.println("fdfsf");
@@ -98,6 +153,5 @@ public class Mainmenucontroller implements Initializable {
     }
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		
 	}
 }

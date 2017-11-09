@@ -6,12 +6,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
 import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -30,21 +30,15 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
-import application.Player;
 
-public class Gridcontroller2 implements Initializable{
-	static volatile int[][] balls;
-	public static boolean resume=false;
-	public static boolean undoflag=false;
-	static Game ongoing=Mainmenucontroller.g;
-	static Player current;
-	static int index;
+public class Gridcontroller1 implements Initializable {
+	static int[][] balls;
+	public static ObservableList<Node> components;
+	public Sphere[][] alpha;
 	@FXML
     private AnchorPane root;
 	@FXML
 	GridPane gamegrid;
-	public Sphere[][] alpha;
-	static volatile public color[] beta;
     @FXML
     private ResourceBundle resources;
     @FXML
@@ -52,17 +46,12 @@ public class Gridcontroller2 implements Initializable{
     @FXML
     public void restartgame(ActionEvent event) throws Exception{
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(Mainmenucontroller.gridchoice));
-    	color[] previous=new color[Mainmenucontroller.playercount];
-    	for(int i=0;i<Mainmenucontroller.playercount;i++){
-    		previous[i]=Mainmenucontroller.g.players.get(i).Color;
-    	}
-    	Mainmenucontroller.g=new Game(Mainmenucontroller.playercount,Mainmenucontroller.gridchoice);
-    	for(int i=0;i<Mainmenucontroller.playercount;i++){
-    		Mainmenucontroller.g.players.add(new Player(new color(previous[i].red,previous[i].green,previous[i].blue),i));
-    	}
-    	index=0;
-    	ongoing=Mainmenucontroller.g;
     	root.setBackground(null);
+    	Mainmenucontroller.g=new Game(Mainmenucontroller.playercount,Mainmenucontroller.gridchoice);
+    	Mainmenucontroller.g.players.removeAll(Mainmenucontroller.g.players);
+    	for(int i=0;i<Mainmenucontroller.playercount;i++){
+    		Mainmenucontroller.g.players.add(new Player(new color(SettingsController.values[i].getRed(),SettingsController.values[i].getGreen(),SettingsController.values[i].getBlue()),i));
+    	}
     	if(root==null){
     		//System.out.println("fdfsf");
     	}
@@ -70,133 +59,72 @@ public class Gridcontroller2 implements Initializable{
     		root.getChildren().setAll(page);
     }
     @FXML
+    public void undo(ActionEvent event) throws ClassNotFoundException, IOException{
+    	System.out.println("undo");
+    	gamegrid.getChildren().setAll(components);
+    	balls=restoregrid();
+    }
+    @FXML
     void backtomenu(ActionEvent event) throws Exception{
-    	resume=true;
     	savegrid();
-    	for(int i=0;i<15;i++){
-    		for(int j=0;j<10;j++){
-    			Mainmenucontroller.g.gamegrid.grid[i][j].n_orbs=balls[i][j];
-    			Mainmenucontroller.g.gamegrid.grid[i][j].currentcolor=beta[i*10+j];
-    		}
-    	}
-    	ongoing.current_turn=index;
-	    Mainmenucontroller.serialize(Mainmenucontroller.g,"GAME.txt");
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Mainmenu.fxml"));
+    	//root.setBackground(null);
     	Slider s=(Slider)page.getChildren().get(1);
     	s.setValue(Mainmenucontroller.playercount);
     	if(root==null){
     		//System.out.println("fdfsf");
     	}
     	else
-    		root.getChildren().setAll(page); 
-    }
-    @FXML
-    public void undo(ActionEvent event) throws Exception{
-    	if(undoflag){
-    		gamegrid.getChildren().remove(151,gamegrid.getChildren().size());
-    		balls=restoregrid();
-    		beta=restoregrid1();
-    		for(int i=0;i<15;i++){
-    			for(int j=0;j<10;j++){
-    				int n=balls[i][j];
-    				switch(n){
-    				case 1:
-    					addorb1(j,i,beta[i*10+j]);
-    					break;
-    				case 2:
-    					addorb1(j,i,beta[i*10+j]);
-    					addorb2(j,i,beta[i*10+j]);
-    					break;
-    				case 3:
-    					addorb1(j,i,beta[i*10+j]);
-    					addorb2(j,i,beta[i*10+j]);
-    					addorb3(j,i,beta[i*10+j]);
-    					break;
-    				}
-    			}
-    		}
-    		undoflag=false;
-    		index-=1; index%=ongoing.no_of_players;
-    		if(index<0)
-    			index=ongoing.no_of_players-1;
-    		}
+    		root.getChildren().setAll(page);
     }
     int calculatecriticalmass(int x,int y){
-    	if(x==0 && y==0 || x==9 && y==14 || x==9 && y==0 || x==0 && y==14)
+    	if(x==0 && y==0 || x==5 && y==8 || x==5 && y==0 || x==0 && y==8)
     		return 1;
-    	else if(x==0 || x==9 || y==0 || y==14)
+    	else if(x==0 || x==5 || y==0 || y==8)
     		return 2;
     	else
     		return 3;
     }
     @FXML
-    private void useraddorb(MouseEvent e) throws IOException, InterruptedException, ExecutionException{
-    	Node target = (Node) e.getTarget();    	
+    private void useraddorb(MouseEvent e) throws OrbOverloadException, IOException {
+    	Node target = (Node) e.getTarget();
         Integer colIndex = GridPane.getColumnIndex(target);
         Integer rowIndex = GridPane.getRowIndex(target);
         if (colIndex == null || rowIndex == null) {
         } else {
         	int k=calculatecriticalmass(colIndex.intValue(),rowIndex.intValue());
-            current=ongoing.players.get(index);
-        	if(beta[rowIndex.intValue()*10+colIndex.intValue()]!=null && !beta[rowIndex.intValue()*10+colIndex.intValue()].equals(current.Color)){
-        	}
-        	else {
-        	undoflag=true;
-            index+=1; index=index%ongoing.no_of_players;
         	if(balls[rowIndex.intValue()][colIndex.intValue()]==k){
-        		savegrid();
-        		if(ongoing.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].currentplayer==null){
-                	ongoing.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].currentplayer=current;
-                }
+        		components.remove(0,components.size());
+            	components.addAll(gamegrid.getChildren());
+            	savegrid();
         		split(colIndex.intValue(),rowIndex.intValue());
-        		System.out.println("Splitting completed");
             	balls[rowIndex.intValue()][colIndex.intValue()]=0;
         	}
         	else{
+        		components.remove(0,components.size());
+            	components.addAll(gamegrid.getChildren());
             	savegrid();
             	if(balls[rowIndex.intValue()][colIndex.intValue()]==0)
-            		addorb1(colIndex.intValue(),rowIndex.intValue(),null);
+            		addorb1(colIndex.intValue(),rowIndex.intValue());
             	else if(balls[rowIndex.intValue()][colIndex.intValue()]==1)
-            		addorb2(colIndex.intValue(),rowIndex.intValue(),null);
+            		addorb2(colIndex.intValue(),rowIndex.intValue());
             	else if(balls[rowIndex.intValue()][colIndex.intValue()]==2)
-            		addorb3(colIndex.intValue(),rowIndex.intValue(),null);
+            		addorb3(colIndex.intValue(),rowIndex.intValue());
             	balls[rowIndex.intValue()][colIndex.intValue()]++;
+            	Mainmenucontroller.g.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].n_orbs=balls[rowIndex.intValue()][colIndex.intValue()];
         	}
-        	Platform.runLater(new Runnable(){public void run(){current.turns++;checkcondition();}});
-        	}
+        	
         }
     }
-     void useraddorb(int x,int y){
-    	int k=calculatecriticalmass(x,y);
-    	if(balls[y][x]==k){
-    		split(x,y);
-        	balls[y][x]=0;
-    	}
-    	else{
-        	if(balls[y][x]==0)
-        		addorb1(x,y,null);
-        	else if(balls[y][x]==1)
-        		addorb2(x,y,null);
-        	else if(balls[y][x]==2)
-        		addorb3(x,y,null);
-        	balls[y][x]++;
-    	}
-    }
-    public void addorb1(int x,int y,color c){
-    	Sphere s=new Sphere(8);
+    public void addorb1(int x,int y){
+    	Sphere s=new Sphere(10);
     	s.setDrawMode(DrawMode.LINE);
     	PhongMaterial pm=new PhongMaterial();
-    	if(c==null){
-    		pm.setDiffuseColor(new Color(current.Color.red,current.Color.green,current.Color.blue,1.0));
-        	beta[y*10+x]=current.Color;
-    	}
-    	else{
-    		pm.setDiffuseColor(new Color(c.red,c.green,c.blue,1.0));
-    	}
+    	pm.setDiffuseColor(Color.LIME);
     	s.setMaterial(pm);
-    	alpha[y*10+x][0]=s;
+    	alpha[y*6+x][0]=s;
     	gamegrid.add(s,x,y);
-    	s.setTranslateX(40);
+    	s.setTranslateX(45);
         RotateTransition rotateTransition = new RotateTransition(); 
     	rotateTransition.setAxis(Rotate.Z_AXIS);
         rotateTransition.setDuration(Duration.millis(1000)); 
@@ -204,69 +132,62 @@ public class Gridcontroller2 implements Initializable{
         rotateTransition.setRate(10);
         rotateTransition.setByAngle(360);
         rotateTransition.setCycleCount(Integer.MAX_VALUE);
-        rotateTransition.play(); 
+        rotateTransition.play();
     }
-    public void addorb2(int x,int y,color c){
-    	Sphere s=new Sphere(8);
+    public void addorb2(int x,int y){
+    	Sphere s=new Sphere(10);
     	s.setDrawMode(DrawMode.LINE);
     	PhongMaterial pm=new PhongMaterial();
-    	if(c==null)
-    		pm.setDiffuseColor(new Color(current.Color.red,current.Color.green,current.Color.blue,1.0));
-    	else
-    		pm.setDiffuseColor(new Color(c.red,c.green,c.blue,1.0));
+    	pm.setDiffuseColor(Color.LIME);
     	s.setMaterial(pm);
-    	alpha[y*10+x][1]=s;
-    	gamegrid.getChildren().remove(alpha[y*10+x][0]);
-    	addorb1(x,y,c);
+    	alpha[y*6+x][1]=s;
     	gamegrid.add(s,x,y);
-    	s.setTranslateX(25);
-        Circle path=new Circle(39,6.5,10.4);
+    	s.setTranslateX(30);
+        Circle path=new Circle(44,6.5,14.4);
         PathTransition pathTransition = new PathTransition(); 
         pathTransition.setDuration(Duration.millis(5000));
+       // pathTransition.setDelay(Duration.ZERO);
         pathTransition.setInterpolator(Interpolator.LINEAR);
         pathTransition.setPath(path);
         pathTransition.setNode(s);
         pathTransition.setCycleCount(Timeline.INDEFINITE);
         pathTransition.play();   
     }
-    public void addorb3(int x,int y,color c){
-    	Sphere s=new Sphere(8);
+    public void addorb3(int x,int y){
+    	Sphere s=new Sphere(10);
     	s.setDrawMode(DrawMode.LINE);
     	PhongMaterial pm=new PhongMaterial();
-    	if(c==null)
-    		pm.setDiffuseColor(new Color(current.Color.red,current.Color.green,current.Color.blue,1.0));
-    	else
-    		pm.setDiffuseColor(new Color(c.red,c.green,c.blue,1.0));
+    	pm.setDiffuseColor(Color.LIME);
     	s.setMaterial(pm);
-    	alpha[y*10+x][2]=s;
-    	gamegrid.getChildren().remove(alpha[y*10+x][1]);
-    	addorb2(x,y,c);
+    	gamegrid.getChildren().remove(alpha[y*6+x][1]);
+    	addorb2(x,y);
+    	alpha[y*6+x][2]=s;
     	gamegrid.add(s,x,y);
-    	s.setTranslateX(30);
-    	s.setTranslateY(-5);
-        Circle path=new Circle(38,-5,9.5);
+    	s.setTranslateX(33);
+    	s.setTranslateY(-10);
+        Circle path=new Circle(44,-6.5,12.4);
         PathTransition pathTransition = new PathTransition(); 
         pathTransition.setDuration(Duration.millis(5000));
+        //pathTransition.setDelay(Duration.ZERO);
         pathTransition.setInterpolator(Interpolator.LINEAR);
         pathTransition.setPath(path);
         pathTransition.setNode(s);
         pathTransition.setCycleCount(Timeline.INDEFINITE);
         pathTransition.play();
-    }
+}
     public void split(int x,int y){
     	int k=calculatecriticalmass(x,y);
     	PhongMaterial pm=new PhongMaterial();
-		beta[y*10+x]=null;
     	switch(k){
     	case 1:
-    		gamegrid.getChildren().remove(alpha[y*10+x][0]);
-    		Sphere s=new Sphere(8);
+    		gamegrid.getChildren().remove(alpha[y*6+x][0]);
+    		Sphere s=new Sphere(10);
         	s.setDrawMode(DrawMode.LINE);
-        	pm.setDiffuseColor(new Color(current.Color.red,current.Color.green,current.Color.blue,1.0));
+        	pm.setDiffuseColor(Color.LIME);
         	s.setMaterial(pm);
         	gamegrid.add(s,x,y);
         	s.setTranslateX(25);
-        	Sphere n=new Sphere(8);
+        	Sphere n=new Sphere(10);
         	n.setDrawMode(DrawMode.LINE);
         	n.setMaterial(pm);
         	gamegrid.add(n,x,y);
@@ -274,10 +195,10 @@ public class Gridcontroller2 implements Initializable{
         	if(x==0 && y==0){
         		goright(s,x+1,y); godown(n,x,y+1);
         	}
-        	else if(x==9 && y==0){
+        	else if(x==5 && y==0){
         		goleft(s,x-1,y); godown(n,x,y+1);
         	}
-        	else if(x==0 && y==14){
+        	else if(x==0 && y==8){
         		goright(s,x+1,y); goUp(n,x,y-1);
         	}
         	else{
@@ -285,20 +206,20 @@ public class Gridcontroller2 implements Initializable{
         	}
     		break;
     	case 2:
-    		gamegrid.getChildren().remove(alpha[y*10+x][0]);
-    		gamegrid.getChildren().remove(alpha[y*10+x][1]);
-    		Sphere n1=new Sphere(8);
+    		gamegrid.getChildren().remove(alpha[y*6+x][0]);
+    		gamegrid.getChildren().remove(alpha[y*6+x][1]);
+    		Sphere n1=new Sphere(10);
         	n1.setDrawMode(DrawMode.LINE);
-        	pm.setDiffuseColor(new Color(current.Color.red,current.Color.green,current.Color.blue,1.0));
+        	pm.setDiffuseColor(Color.LIME);
         	n1.setMaterial(pm);
         	gamegrid.add(n1,x,y);
         	n1.setTranslateX(25);
-        	Sphere n2=new Sphere(8);
+        	Sphere n2=new Sphere(10);
         	n2.setDrawMode(DrawMode.LINE);
         	n2.setMaterial(pm);
         	gamegrid.add(n2,x,y);
         	n2.setTranslateX(27);
-        	Sphere n3=new Sphere(8);
+        	Sphere n3=new Sphere(10);
         	n3.setDrawMode(DrawMode.LINE);
         	n3.setMaterial(pm);
         	gamegrid.add(n3,x,y);
@@ -306,7 +227,7 @@ public class Gridcontroller2 implements Initializable{
         	if(x==0){
         		godown(n1,x,y+1);goright(n2,x+1,y); goUp(n3,x,y-1);
         	}
-        	else if(x==9){
+        	else if(x==5){
         		godown(n1,x,y+1); goleft(n2,x-1,y); goUp(n3,x,y-1);
         	}
         	else if(y==0){
@@ -317,26 +238,26 @@ public class Gridcontroller2 implements Initializable{
         	}
     		break;
     	case 3:
-    		gamegrid.getChildren().remove(alpha[y*10+x][0]);
-    		gamegrid.getChildren().remove(alpha[y*10+x][1]);
-    		gamegrid.getChildren().remove(alpha[y*10+x][2]);
-    		Sphere s1=new Sphere(8);
+    		gamegrid.getChildren().remove(alpha[y*6+x][0]);
+    		gamegrid.getChildren().remove(alpha[y*6+x][1]);
+    		gamegrid.getChildren().remove(alpha[y*6+x][2]);
+    		Sphere s1=new Sphere(10);
         	s1.setDrawMode(DrawMode.LINE);
-        	pm.setDiffuseColor(new Color(current.Color.red,current.Color.green,current.Color.blue,1.0));
+        	pm.setDiffuseColor(Color.LIME);
         	s1.setMaterial(pm);
         	gamegrid.add(s1,x,y);
         	s1.setTranslateX(25);
-        	Sphere s2=new Sphere(8);
+        	Sphere s2=new Sphere(10);
         	s2.setDrawMode(DrawMode.LINE);
         	s2.setMaterial(pm);
         	gamegrid.add(s2,x,y);
         	s2.setTranslateX(27);
-        	Sphere s3=new Sphere(8);
+        	Sphere s3=new Sphere(10);
         	s3.setDrawMode(DrawMode.LINE);
         	s3.setMaterial(pm);
         	gamegrid.add(s3,x,y);
         	s1.setTranslateX(25);
-        	Sphere s4=new Sphere(8);
+        	Sphere s4=new Sphere(10);
         	s4.setDrawMode(DrawMode.LINE);
         	s4.setMaterial(pm);
         	gamegrid.add(s4,x,y);
@@ -358,6 +279,7 @@ public class Gridcontroller2 implements Initializable{
         PathTransition pathTransition = new PathTransition(); 
         pathTransition.setDuration(Duration.millis(300));
         pathTransition.setInterpolator(Interpolator.LINEAR);
+       // pathTransition.setRate(100); 
         pathTransition.setPath(line);
         pathTransition.setNode(s);
         pathTransition.setCycleCount(1);
@@ -379,6 +301,7 @@ public class Gridcontroller2 implements Initializable{
         PathTransition pathTransition = new PathTransition(); 
         pathTransition.setDuration(Duration.millis(300));
         pathTransition.setInterpolator(Interpolator.LINEAR);
+       // pathTransition.setRate(100); 
         pathTransition.setPath(line);
         pathTransition.setNode(s);
         pathTransition.setCycleCount(1);
@@ -400,6 +323,7 @@ public class Gridcontroller2 implements Initializable{
         PathTransition pathTransition = new PathTransition(); 
         pathTransition.setDuration(Duration.millis(300));
         pathTransition.setInterpolator(Interpolator.LINEAR);
+       // pathTransition.setRate(100); 
         pathTransition.setPath(line);
         pathTransition.setNode(s);
         pathTransition.setCycleCount(1);
@@ -421,6 +345,7 @@ public class Gridcontroller2 implements Initializable{
         PathTransition pathTransition = new PathTransition(); 
         pathTransition.setDuration(Duration.millis(300));
         pathTransition.setInterpolator(Interpolator.LINEAR);
+       // pathTransition.setRate(100); 
         pathTransition.setPath(line);
         pathTransition.setNode(s);
         pathTransition.setCycleCount(1);
@@ -433,24 +358,36 @@ public class Gridcontroller2 implements Initializable{
             }
         });
     }
+	void useraddorb(int x,int y){
+    	int k=calculatecriticalmass(x,y);
+    	if(balls[y][x]==k){
+    		split(x,y);
+        	balls[y][x]=0;
+    	}
+    	else{
+        	if(balls[y][x]==0)
+        		addorb1(x,y);
+        	else if(balls[y][x]==1)
+        		addorb2(x,y);
+        	else if(balls[y][x]==2)
+        		addorb3(x,y);
+        	balls[y][x]++;
+    	}
+    }
     public static void savegrid() throws IOException {
 		ObjectOutputStream out=null;
-		ObjectOutputStream out1=null;
 		try{
-			out=new ObjectOutputStream(new FileOutputStream("grid2state.txt"));
+			out=new ObjectOutputStream(new FileOutputStream("grid1state.txt"));
 			out.writeObject(balls);
-			out1=new ObjectOutputStream(new FileOutputStream("grid2state1.txt"));
-			out1.writeObject(beta);
 		}
 		finally{
 			out.close();
-			out1.close();
 		}
 	}
 	public static int[][] restoregrid() throws IOException, ClassNotFoundException {
 		ObjectInputStream in=null;
 		try{
-			in=new ObjectInputStream(new FileInputStream("grid2state.txt"));
+			in=new ObjectInputStream(new FileInputStream("grid1state.txt"));
 			int[][] g=(int[][])in.readObject();
 			return g;
 		}
@@ -458,74 +395,14 @@ public class Gridcontroller2 implements Initializable{
 			in.close();
 		}
 	}
-	public static color[] restoregrid1() throws IOException, ClassNotFoundException {
-		ObjectInputStream in=null;
-		try{
-			in=new ObjectInputStream(new FileInputStream("grid2state1.txt"));
-			color[] g=(color[])in.readObject();
-			return g;
-		}
-		finally{
-			in.close();
-		}
-	}
-	public void checkcondition(){
-		System.out.println("checking..");
-		for(Player p:ongoing.players){
-			p.number_of_orbs_onboard=0;
-		}
-		for(int i=0;i<15;i++){
-    		for(int j=0;j<10;j++){
-    			for(Player p:ongoing.players){
-    				if(beta[i*10+j]!=null && p.Color.equals(beta[i*10+j])){
-    					p.number_of_orbs_onboard++;
-    					break;
-    				}
-    			}
-    		}
-		}
-		for(Player p:ongoing.players){
-			if(p.turns>0 && p.number_of_orbs_onboard==0){
-				p.lost=true;
-				System.out.println("Lost"+" "+p);
-			}
-		}
-	}
     @FXML
     void initialize() {
+    	
     }
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		balls=new int[15][10];
-		alpha=new Sphere[150][3];
-		beta=new color[150];
-		index=0;
-		if(resume){
-			for(int i=0;i<15;i++){
-	    		for(int j=0;j<10;j++){
-	    			int n=Mainmenucontroller.g.gamegrid.grid[i][j].n_orbs;
-	    			color c=Mainmenucontroller.g.gamegrid.grid[i][j].currentcolor;
-	    			beta[i*10+j]=c;
-	    			balls[i][j]=n;
-	    			switch(n){
-	    			case 1:
-	    				addorb1(j,i,c);
-	    				break;
-	    			case 2:
-	    				addorb1(j,i,c);
-	    				addorb2(j,i,c);
-	    				break;
-	    			case 3:
-	    				addorb1(j,i,c);
-	    				addorb2(j,i,c);
-	    				addorb3(j,i,c);
-	    				break;
-	    			}
-	    		}
-	    	}
-			ongoing=Mainmenucontroller.g;
-			resume=false;
-			index=ongoing.current_turn;
-		}
-		}
+		balls=new int[9][6];
+		alpha=new Sphere[54][3];
+		components = FXCollections.observableArrayList();
+	}
 }

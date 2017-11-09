@@ -1,15 +1,19 @@
 package application;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Game implements Serializable{
 	private static final long serialVersionUID = 1L;
 	int no_of_players;
-	Player players[];
+	int current_turn;
+	ArrayList<Player> players;
 	boolean is_finished=false;
 	Grid gamegrid;
+	String gridsize;
 	public Game(int no_of_players,String gridsize){
 		this.no_of_players=no_of_players;
-		players=new Player[this.no_of_players];
+		this.gridsize=gridsize;
+		players=new ArrayList<Player>(no_of_players);
 		if(gridsize.equals("Grid1.fxml")){
 			gamegrid=new Grid(1);
 		}

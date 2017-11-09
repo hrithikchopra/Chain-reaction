@@ -27,7 +27,7 @@ public class SettingsController {
     @FXML
     void backtomenu(ActionEvent event) throws Exception{
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Mainmenu.fxml"));
-    	Slider s=(Slider)page.getChildren().get(0);
+    	Slider s=(Slider)page.getChildren().get(1);
     	s.setValue(Mainmenucontroller.playercount);
     	if(root==null){
     		//System.out.println("fdfsf");
