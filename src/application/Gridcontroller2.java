@@ -545,12 +545,16 @@ public class Gridcontroller2 implements Initializable{
                 @Override
                 public void run() {
                 	try {
+                		Thread.sleep(500);
 						AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("ended.fxml"));
 						root.setBackground(null);
 						Label l=(Label)page.getChildren().get(0);
 						l.setText(ongoing.players.get(0).toString()+" wins");
 						root.getChildren().setAll(page);
 					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -575,6 +579,8 @@ public class Gridcontroller2 implements Initializable{
 		alpha=new Sphere[150][3];
 		beta=new color[150];
 		index=0;
+		counter=0;
+		ongoing=Mainmenucontroller.g;
 		if(resume){
 			for(int i=0;i<15;i++){
 	    		for(int j=0;j<10;j++){
@@ -598,7 +604,6 @@ public class Gridcontroller2 implements Initializable{
 	    			}
 	    		}
 	    	}
-			ongoing=Mainmenucontroller.g;
 			resume=false;
 			index=ongoing.current_turn;
 		}
