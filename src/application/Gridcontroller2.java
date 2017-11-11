@@ -6,18 +6,22 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import javafx.animation.Interpolator;
 import javafx.animation.PathTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -34,6 +38,7 @@ import application.Player;
 
 public class Gridcontroller2 implements Initializable{
 	static volatile int[][] balls;
+	static int counter=0;
 	public static boolean resume=false;
 	public static boolean undoflag=false;
 	static Game ongoing=Mainmenucontroller.g;
@@ -51,7 +56,7 @@ public class Gridcontroller2 implements Initializable{
     private URL location;
     @FXML
     public void restartgame(ActionEvent event) throws Exception{
-    	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(Mainmenucontroller.gridchoice));
+    	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Grid2.fxml"));
     	color[] previous=new color[Mainmenucontroller.playercount];
     	for(int i=0;i<Mainmenucontroller.playercount;i++){
     		previous[i]=Mainmenucontroller.g.players.get(i).Color;
@@ -61,7 +66,7 @@ public class Gridcontroller2 implements Initializable{
     		Mainmenucontroller.g.players.add(new Player(new color(previous[i].red,previous[i].green,previous[i].blue),i));
     	}
     	index=0;
-    	ongoing=Mainmenucontroller.g;
+    	ongoing=Mainmenucontroller.g; 
     	root.setBackground(null);
     	if(root==null){
     		//System.out.println("fdfsf");
@@ -131,46 +136,82 @@ public class Gridcontroller2 implements Initializable{
     }
     @FXML
     private void useraddorb(MouseEvent e) throws IOException, InterruptedException, ExecutionException{
-    	Node target = (Node) e.getTarget();    	
+    	Node target = (Node) e.getTarget();
         Integer colIndex = GridPane.getColumnIndex(target);
         Integer rowIndex = GridPane.getRowIndex(target);
         if (colIndex == null || rowIndex == null) {
-        } else {
+        } 
+        else {
         	int k=calculatecriticalmass(colIndex.intValue(),rowIndex.intValue());
             current=ongoing.players.get(index);
         	if(beta[rowIndex.intValue()*10+colIndex.intValue()]!=null && !beta[rowIndex.intValue()*10+colIndex.intValue()].equals(current.Color)){
         	}
         	else {
         	undoflag=true;
+        	current.turns++;
             index+=1; index=index%ongoing.no_of_players;
+            counter++;
         	if(balls[rowIndex.intValue()][colIndex.intValue()]==k){
         		savegrid();
         		if(ongoing.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].currentplayer==null){
                 	ongoing.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].currentplayer=current;
                 }
-        		split(colIndex.intValue(),rowIndex.intValue());
-        		System.out.println("Splitting completed");
             	balls[rowIndex.intValue()][colIndex.intValue()]=0;
+    			Service<Void> service = new Service<Void>() {
+    		        @Override
+    		        protected Task<Void> createTask() {
+    		            return new Task<Void>() {           
+    		                @Override
+    		                protected Void call() throws Exception {
+    		                    //Background work                       
+    		                    final CountDownLatch latch = new CountDownLatch(1);
+    		                    Platform.runLater(new Runnable() {                          
+    		                        @Override
+    		                        public void run() {
+    		                            try{
+    		                    			split(colIndex.intValue(),rowIndex.intValue());
+    		                            }finally{
+    		                                latch.countDown();
+    		                            }
+    		                        }
+    		                    });
+    		                    latch.await();    		                    
+    		                    while(counter!=csum()){
+    		                    	//System.out.println(counter+" "+csum());
+    		                    	//Thread.sleep(1000);
+    		                    }
+    		                    checkcondition();
+    		                    return null;
+    		                }
+    		            };
+    		        }
+    		    };
+    		    service.start();
+    		    
         	}
         	else{
             	savegrid();
-            	if(balls[rowIndex.intValue()][colIndex.intValue()]==0)
+            	if(balls[rowIndex.intValue()][colIndex.intValue()]==0){
             		addorb1(colIndex.intValue(),rowIndex.intValue(),null);
-            	else if(balls[rowIndex.intValue()][colIndex.intValue()]==1)
+            	}
+            	else if(balls[rowIndex.intValue()][colIndex.intValue()]==1){
             		addorb2(colIndex.intValue(),rowIndex.intValue(),null);
-            	else if(balls[rowIndex.intValue()][colIndex.intValue()]==2)
+            	}
+            	else if(balls[rowIndex.intValue()][colIndex.intValue()]==2){
             		addorb3(colIndex.intValue(),rowIndex.intValue(),null);
+            	}
             	balls[rowIndex.intValue()][colIndex.intValue()]++;
         	}
-        	Platform.runLater(new Runnable(){public void run(){current.turns++;checkcondition();}});
         	}
+        	
         }
     }
+    
      void useraddorb(int x,int y){
     	int k=calculatecriticalmass(x,y);
     	if(balls[y][x]==k){
+    		balls[y][x]=0;
     		split(x,y);
-        	balls[y][x]=0;
     	}
     	else{
         	if(balls[y][x]==0)
@@ -179,7 +220,7 @@ public class Gridcontroller2 implements Initializable{
         		addorb2(x,y,null);
         	else if(balls[y][x]==2)
         		addorb3(x,y,null);
-        	balls[y][x]++;
+        	balls[y][x]++; 
     	}
     }
     public void addorb1(int x,int y,color c){
@@ -469,27 +510,61 @@ public class Gridcontroller2 implements Initializable{
 			in.close();
 		}
 	}
-	public void checkcondition(){
-		System.out.println("checking..");
+	@FXML
+	public void checkcondition() throws IOException{
 		for(Player p:ongoing.players){
 			p.number_of_orbs_onboard=0;
 		}
 		for(int i=0;i<15;i++){
     		for(int j=0;j<10;j++){
     			for(Player p:ongoing.players){
-    				if(beta[i*10+j]!=null && p.Color.equals(beta[i*10+j])){
+    				if(beta[i*10+j]==null)
+    					break;
+    				else if(p.Color.equals(beta[i*10+j])){
     					p.number_of_orbs_onboard++;
     					break;
     				}
     			}
     		}
 		}
+		Player[] play=new Player[ongoing.no_of_players];
+		int i=0;
 		for(Player p:ongoing.players){
 			if(p.turns>0 && p.number_of_orbs_onboard==0){
 				p.lost=true;
 				System.out.println("Lost"+" "+p);
+				play[i++]=p;
+				ongoing.no_of_players--;
 			}
 		}
+		for(int j=0;j<i;j++){
+			ongoing.players.remove(play[j]);
+		}
+		if(ongoing.no_of_players==1){
+			Platform.runLater(new Runnable(){                          
+                @Override
+                public void run() {
+                	try {
+						AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("ended.fxml"));
+						root.setBackground(null);
+						Label l=(Label)page.getChildren().get(0);
+						l.setText(ongoing.players.get(0).toString()+" wins");
+						root.getChildren().setAll(page);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+                }});
+		}
+	}
+	static int csum(){
+		int s=0;
+		for(int i=0;i<15;i++){
+    		for(int j=0;j<10;j++){
+    			s+=balls[i][j];
+    		}
+		}
+		return s;
 	}
     @FXML
     void initialize() {

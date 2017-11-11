@@ -7,19 +7,20 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 public class Mainmenu extends Application {
+	static AnchorPane rootpane;
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		Game old=Mainmenucontroller.deserialize("GAME.txt");
-		AnchorPane rootpane= (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Mainmenu.fxml"));
+		//Game old=Mainmenucontroller.deserialize("GAME.txt");
+		rootpane=(AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Mainmenu.fxml"));
 		Button resume=(Button)rootpane.getChildren().get(0);
 		resume.setDisable(true);
 		Scene scene = new Scene(rootpane);
-		if(old!=null && !old.is_finished){
+		/*if(old!=null && !old.is_finished){
         	resume.setDisable(false);
         }
         if(old==null){
         	System.out.println("null");
-        } 
+        } */	
         primaryStage.setScene(scene);
         primaryStage.show(); 
 	}
