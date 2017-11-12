@@ -14,9 +14,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+
 public class Mainmenucontroller implements Initializable {
-	static String gridchoice="Grid2.fxml";
+	static String gridchoice="Grid1.fxml";
 	@FXML
     private AnchorPane rootpane;
 	@FXML
@@ -45,6 +45,9 @@ public class Mainmenucontroller implements Initializable {
     	g=old;
     	Gridcontroller2.resume=true;
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(gridchoice));
+    	for(Player a:g.players){
+    		Gridcontroller2.counter+=a.number_of_orbs_onboard;
+    	}
     	rootpane.setBackground(null);
     	if(rootpane==null){
     		//System.out.println("fdfsf");
@@ -53,32 +56,13 @@ public class Mainmenucontroller implements Initializable {
     		rootpane.getChildren().setAll(page);
 	}
     private void Build1(Game old) throws Exception {
-    	Gridcontroller1 h=new Gridcontroller1();
     	gridchoice=old.gridsize;
-    	h.initialize();
     	playercount=old.no_of_players;
     	g=old;
+    	Gridcontroller1.resume=true;
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(gridchoice));
-    	h.gamegrid=(GridPane)page.getChildren().get(0);
-    	Gridcontroller2.balls=Gridcontroller2.restoregrid();    	
-    	for(int i=0;i<15;i++){
-    		for(int j=0;j<10;j++){
-    			int n=Gridcontroller2.balls[i][j];
-    			switch(n){
-    			case 1:
-    				h.addorb1(j,i);
-    				break;
-    			case 2:
-    				h.addorb1(j,i);
-    				h.addorb2(j,i);
-    				break;
-    			case 3:
-    				h.addorb1(j,i);
-    				h.addorb2(j,i);
-    				h.addorb3(j,i);
-    				break;
-    			}
-    		}
+    	for(Player a:g.players){
+    		Gridcontroller1.counter+=a.number_of_orbs_onboard;
     	}
     	rootpane.setBackground(null);
     	if(rootpane==null){
@@ -153,5 +137,6 @@ public class Mainmenucontroller implements Initializable {
     }
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		
 	}
 }

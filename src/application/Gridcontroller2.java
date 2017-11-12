@@ -21,8 +21,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -59,7 +62,8 @@ public class Gridcontroller2 implements Initializable{
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Grid2.fxml"));
     	color[] previous=new color[Mainmenucontroller.playercount];
     	for(int i=0;i<Mainmenucontroller.playercount;i++){
-    		previous[i]=Mainmenucontroller.g.players.get(i).Color;
+    		color c=new color(SettingsController.values[i].getRed(),SettingsController.values[i].getGreen(),SettingsController.values[i].getBlue());
+    		previous[i]=c;
     	}
     	Mainmenucontroller.g=new Game(Mainmenucontroller.playercount,Mainmenucontroller.gridchoice);
     	for(int i=0;i<Mainmenucontroller.playercount;i++){
@@ -78,6 +82,9 @@ public class Gridcontroller2 implements Initializable{
     void backtomenu(ActionEvent event) throws Exception{
     	resume=true;
     	savegrid();
+    	if(ongoing.no_of_players==1){
+    		ongoing.is_finished=true;
+    	}
     	for(int i=0;i<15;i++){
     		for(int j=0;j<10;j++){
     			Mainmenucontroller.g.gamegrid.grid[i][j].n_orbs=balls[i][j];
@@ -89,6 +96,9 @@ public class Gridcontroller2 implements Initializable{
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Mainmenu.fxml"));
     	Slider s=(Slider)page.getChildren().get(1);
     	s.setValue(Mainmenucontroller.playercount);
+    	Button r=(Button)page.getChildren().get(0);
+    	if(ongoing.is_finished)
+    		r.setDisable(true);
     	if(root==null){
     		//System.out.println("fdfsf");
     	}
@@ -99,6 +109,8 @@ public class Gridcontroller2 implements Initializable{
     public void undo(ActionEvent event) throws Exception{
     	if(undoflag){
     		gamegrid.getChildren().remove(151,gamegrid.getChildren().size());
+    		counter--;
+    		current.turns--;
     		balls=restoregrid();
     		beta=restoregrid1();
     		for(int i=0;i<15;i++){
@@ -120,11 +132,27 @@ public class Gridcontroller2 implements Initializable{
     				}
     			}
     		}
+    		for(Player p:ongoing.players){
+    			p.number_of_orbs_onboard=0;
+    		}
+    		for(int i=0;i<15;i++){
+        		for(int j=0;j<10;j++){
+        			for(Player p:ongoing.players){
+        				if(beta[i*10+j]==null)
+        					break;
+        				else if(p.Color.equals(beta[i*10+j])){
+        					p.number_of_orbs_onboard++;
+        					break;
+        				}
+        			}
+        		}
+    		}
     		undoflag=false;
     		index-=1; index%=ongoing.no_of_players;
     		if(index<0)
     			index=ongoing.no_of_players-1;
     		}
+    	setgridlines();
     }
     int calculatecriticalmass(int x,int y){
     	if(x==0 && y==0 || x==9 && y==14 || x==9 && y==0 || x==0 && y==14)
@@ -133,6 +161,22 @@ public class Gridcontroller2 implements Initializable{
     		return 2;
     	else
     		return 3;
+    }
+    public void setgridlines(){
+    	int i=0;
+    	Player next=ongoing.players.get(index);
+    	Color c=new Color(next.Color.red,next.Color.green,next.Color.blue,1.0);
+    	String colour=c.toString();
+    	colour="#"+colour.substring(2);
+    	String style=new String("-fx-border-color:"+colour+";"+"-fx-alignment: center;");
+    	for (Node n: gamegrid.getChildren()) {
+	    	if(i<151){
+	            n.setStyle(style);
+	    	}
+	    	else
+	    		break;
+	    	i++;
+	    }
     }
     @FXML
     private void useraddorb(MouseEvent e) throws IOException, InterruptedException, ExecutionException{
@@ -181,6 +225,7 @@ public class Gridcontroller2 implements Initializable{
     		                    	//Thread.sleep(1000);
     		                    }
     		                    checkcondition();
+    		                    setgridlines();
     		                    return null;
     		                }
     		            };
@@ -201,6 +246,7 @@ public class Gridcontroller2 implements Initializable{
             		addorb3(colIndex.intValue(),rowIndex.intValue(),null);
             	}
             	balls[rowIndex.intValue()][colIndex.intValue()]++;
+            	setgridlines();
         	}
         	}
         	
@@ -540,24 +586,38 @@ public class Gridcontroller2 implements Initializable{
 		for(int j=0;j<i;j++){
 			ongoing.players.remove(play[j]);
 		}
+		index=ongoing.players.indexOf(current);
+		index++;
+		index%=ongoing.no_of_players;
 		if(ongoing.no_of_players==1){
 			Platform.runLater(new Runnable(){                          
                 @Override
                 public void run() {
                 	try {
-                		Thread.sleep(500);
-						AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("ended.fxml"));
+						/*AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("ended.fxml"));
 						root.setBackground(null);
 						Label l=(Label)page.getChildren().get(0);
 						l.setText(ongoing.players.get(0).toString()+" wins");
-						root.getChildren().setAll(page);
-					} catch (IOException e) {
+						root.getChildren().setAll(page); */
+                		Alert alert = new Alert(AlertType.INFORMATION);
+                		ButtonType playagain=new ButtonType("Play Again");
+                		alert.getButtonTypes().remove(0);
+                		alert.getButtonTypes().add(playagain);
+                		alert.getButtonTypes().add(ButtonType.FINISH);
+                		alert.setHeaderText("We Have a Winner");
+                		alert.setContentText(ongoing.players.get(0).toString()+" wins");
+                		alert.showAndWait();
+                		if(alert.getResult().equals(ButtonType.FINISH)){
+                			backtomenu(new ActionEvent());
+                			System.out.println("ended");
+                		}
+                		if(alert.getResult().equals(playagain)){
+                			restartgame(new ActionEvent());
+                		}
+					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					} 
                 }});
 		}
 	}
@@ -581,6 +641,7 @@ public class Gridcontroller2 implements Initializable{
 		index=0;
 		counter=0;
 		ongoing=Mainmenucontroller.g;
+		setgridlines();
 		if(resume){
 			for(int i=0;i<15;i++){
 	    		for(int j=0;j<10;j++){

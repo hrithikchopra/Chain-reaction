@@ -11,6 +11,7 @@ public class Player implements Serializable {
 	public Player(color c,int name){
 		this.Color=c;
 		this.number_of_orbs_onboard=0;
+		name++;
 		this.name="Player"+name;
 	}
 	@Override
