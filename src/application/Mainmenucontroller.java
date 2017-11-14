@@ -1,18 +1,24 @@
 package application;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Scanner;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 
 public class Mainmenucontroller implements Initializable {
@@ -61,10 +67,10 @@ public class Mainmenucontroller implements Initializable {
     	g=old;
     	Gridcontroller1.resume=true;
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(gridchoice));
+    	rootpane.setBackground(null);
     	for(Player a:g.players){
     		Gridcontroller1.counter+=a.number_of_orbs_onboard;
     	}
-    	rootpane.setBackground(null);
     	if(rootpane==null){
     		//System.out.println("fdfsf");
     	}
@@ -94,6 +100,36 @@ public class Mainmenucontroller implements Initializable {
     @FXML
     void gridselection2(ActionEvent event){
     	gridchoice="Grid2.fxml";
+    }
+    @FXML
+    void about(ActionEvent event) {
+    	Alert alert = new Alert(AlertType.INFORMATION);
+    	alert.setTitle("ABOUT");
+    	alert.setHeaderText("About");
+    	alert.setContentText("Chain Reaction Game (AP Project 2)"+"\n"+"By:"+"\n"+"     Hrithik chopra"+"\n"+"     Anshul gupta");
+    	alert.showAndWait();
+    }
+
+    @FXML
+    void instructions(ActionEvent event) throws FileNotFoundException {
+    	Alert alert = new Alert(AlertType.INFORMATION);
+    	alert.setTitle("Instructions");
+    	alert.setHeaderText("Instructions");
+    	File s=new File("Instructions.txt");
+    	String instructions="";
+    	Scanner scan=new Scanner(s);
+    	while(scan.hasNextLine()){
+    		String add=scan.nextLine();
+    		if(Integer.parseInt(add.substring(0,1))>=2 && Integer.parseInt(add.substring(0,1))<=6){
+    			instructions+="\n";
+    		}
+    		instructions+=add;
+    	}
+    	scan.close();
+    	alert.setContentText(instructions);
+    	alert.getDialogPane().setPrefHeight(475);
+    	alert.getDialogPane().setPrefWidth(500);
+    	alert.showAndWait();
     }
     @FXML
     public void ClickedSettings(ActionEvent event) throws Exception {
@@ -137,6 +173,5 @@ public class Mainmenucontroller implements Initializable {
     }
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		
 	}
 }

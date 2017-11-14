@@ -8,7 +8,7 @@
 
 <AnchorPane fx:id="rootpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="800.0" style="-fx-background-image: url('file:/home/hrithik/workspace/Chain_Reaction/unnamed.png');" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Mainmenucontroller">
    <children>
-      <Button fx:id="Resumegame" layoutX="366.0" layoutY="197.0" mnemonicParsing="false" onAction="#Resume" text="Resume" />
+      <Button fx:id="Resumegame" layoutX="366.0" layoutY="197.0" mnemonicParsing="false" onAction="#Resume" stylesheets="@../../s.css" text="Resume" />
       <Slider fx:id="no_of_players" layoutX="88.0" layoutY="292.0" majorTickUnit="1.0" max="8.0" min="2.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" />
       <Button layoutX="356.0" layoutY="146.0" mnemonicParsing="false" onAction="#StartGame" prefHeight="34.0" prefWidth="88.0" text="Play Game" />
       <MenuBar layoutY="-1.0" prefHeight="25.0" prefWidth="800.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -20,8 +20,8 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-                  <MenuItem mnemonicParsing="false" text="Instructions" />
+              <MenuItem mnemonicParsing="false" onAction="#about" text="About" />
+                  <MenuItem mnemonicParsing="false" onAction="#instructions" text="Instructions" />
             </items>
           </Menu>
         </menus>

@@ -24,6 +24,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
@@ -59,7 +61,6 @@ public class Gridcontroller2 implements Initializable{
     private URL location;
     @FXML
     public void restartgame(ActionEvent event) throws Exception{
-    	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Grid2.fxml"));
     	color[] previous=new color[Mainmenucontroller.playercount];
     	for(int i=0;i<Mainmenucontroller.playercount;i++){
     		color c=new color(SettingsController.values[i].getRed(),SettingsController.values[i].getGreen(),SettingsController.values[i].getBlue());
@@ -69,6 +70,7 @@ public class Gridcontroller2 implements Initializable{
     	for(int i=0;i<Mainmenucontroller.playercount;i++){
     		Mainmenucontroller.g.players.add(new Player(new color(previous[i].red,previous[i].green,previous[i].blue),i));
     	}
+    	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Grid2.fxml"));
     	index=0;
     	ongoing=Mainmenucontroller.g; 
     	root.setBackground(null);
@@ -99,6 +101,10 @@ public class Gridcontroller2 implements Initializable{
     	Button r=(Button)page.getChildren().get(0);
     	if(ongoing.is_finished)
     		r.setDisable(true);
+    	else
+    		checkcondition();
+    	for(Player a:ongoing.players)
+    		System.out.println(a.number_of_orbs_onboard);
     	if(root==null){
     		//System.out.println("fdfsf");
     	}
@@ -271,8 +277,9 @@ public class Gridcontroller2 implements Initializable{
     }
     public void addorb1(int x,int y,color c){
     	Sphere s=new Sphere(8);
-    	s.setDrawMode(DrawMode.LINE);
+    	s.setDrawMode(DrawMode.FILL);
     	PhongMaterial pm=new PhongMaterial();
+
     	if(c==null){
     		pm.setDiffuseColor(new Color(current.Color.red,current.Color.green,current.Color.blue,1.0));
         	beta[y*10+x]=current.Color;
@@ -295,7 +302,7 @@ public class Gridcontroller2 implements Initializable{
     }
     public void addorb2(int x,int y,color c){
     	Sphere s=new Sphere(8);
-    	s.setDrawMode(DrawMode.LINE);
+    	s.setDrawMode(DrawMode.FILL);
     	PhongMaterial pm=new PhongMaterial();
     	if(c==null)
     		pm.setDiffuseColor(new Color(current.Color.red,current.Color.green,current.Color.blue,1.0));
@@ -318,7 +325,7 @@ public class Gridcontroller2 implements Initializable{
     }
     public void addorb3(int x,int y,color c){
     	Sphere s=new Sphere(8);
-    	s.setDrawMode(DrawMode.LINE);
+    	s.setDrawMode(DrawMode.FILL);
     	PhongMaterial pm=new PhongMaterial();
     	if(c==null)
     		pm.setDiffuseColor(new Color(current.Color.red,current.Color.green,current.Color.blue,1.0));
@@ -348,13 +355,13 @@ public class Gridcontroller2 implements Initializable{
     	case 1:
     		gamegrid.getChildren().remove(alpha[y*10+x][0]);
     		Sphere s=new Sphere(8);
-        	s.setDrawMode(DrawMode.LINE);
+        	s.setDrawMode(DrawMode.FILL);
         	pm.setDiffuseColor(new Color(current.Color.red,current.Color.green,current.Color.blue,1.0));
         	s.setMaterial(pm);
         	gamegrid.add(s,x,y);
         	s.setTranslateX(25);
         	Sphere n=new Sphere(8);
-        	n.setDrawMode(DrawMode.LINE);
+        	n.setDrawMode(DrawMode.FILL);
         	n.setMaterial(pm);
         	gamegrid.add(n,x,y);
         	s.setTranslateX(27);
@@ -375,18 +382,18 @@ public class Gridcontroller2 implements Initializable{
     		gamegrid.getChildren().remove(alpha[y*10+x][0]);
     		gamegrid.getChildren().remove(alpha[y*10+x][1]);
     		Sphere n1=new Sphere(8);
-        	n1.setDrawMode(DrawMode.LINE);
+        	n1.setDrawMode(DrawMode.FILL);
         	pm.setDiffuseColor(new Color(current.Color.red,current.Color.green,current.Color.blue,1.0));
         	n1.setMaterial(pm);
         	gamegrid.add(n1,x,y);
         	n1.setTranslateX(25);
         	Sphere n2=new Sphere(8);
-        	n2.setDrawMode(DrawMode.LINE);
+        	n2.setDrawMode(DrawMode.FILL);
         	n2.setMaterial(pm);
         	gamegrid.add(n2,x,y);
         	n2.setTranslateX(27);
         	Sphere n3=new Sphere(8);
-        	n3.setDrawMode(DrawMode.LINE);
+        	n3.setDrawMode(DrawMode.FILL);
         	n3.setMaterial(pm);
         	gamegrid.add(n3,x,y);
         	n3.setTranslateX(24);
@@ -408,23 +415,23 @@ public class Gridcontroller2 implements Initializable{
     		gamegrid.getChildren().remove(alpha[y*10+x][1]);
     		gamegrid.getChildren().remove(alpha[y*10+x][2]);
     		Sphere s1=new Sphere(8);
-        	s1.setDrawMode(DrawMode.LINE);
+        	s1.setDrawMode(DrawMode.FILL);
         	pm.setDiffuseColor(new Color(current.Color.red,current.Color.green,current.Color.blue,1.0));
         	s1.setMaterial(pm);
         	gamegrid.add(s1,x,y);
         	s1.setTranslateX(25);
         	Sphere s2=new Sphere(8);
-        	s2.setDrawMode(DrawMode.LINE);
+        	s2.setDrawMode(DrawMode.FILL);
         	s2.setMaterial(pm);
         	gamegrid.add(s2,x,y);
         	s2.setTranslateX(27);
         	Sphere s3=new Sphere(8);
-        	s3.setDrawMode(DrawMode.LINE);
+        	s3.setDrawMode(DrawMode.FILL);
         	s3.setMaterial(pm);
         	gamegrid.add(s3,x,y);
         	s1.setTranslateX(25);
         	Sphere s4=new Sphere(8);
-        	s4.setDrawMode(DrawMode.LINE);
+        	s4.setDrawMode(DrawMode.FILL);
         	s4.setMaterial(pm);
         	gamegrid.add(s4,x,y);
         	s4.setTranslateX(25);
@@ -567,7 +574,7 @@ public class Gridcontroller2 implements Initializable{
     				if(beta[i*10+j]==null)
     					break;
     				else if(p.Color.equals(beta[i*10+j])){
-    					p.number_of_orbs_onboard++;
+    					p.number_of_orbs_onboard+=balls[i][j];
     					break;
     				}
     			}
@@ -602,10 +609,14 @@ public class Gridcontroller2 implements Initializable{
                 		Alert alert = new Alert(AlertType.INFORMATION);
                 		ButtonType playagain=new ButtonType("Play Again");
                 		alert.getButtonTypes().remove(0);
+                		Image z=new Image(Gridcontroller2.class.getResource("NIGHTOWL107.png").toExternalForm());
+                		ImageView img=new ImageView(z);
+                		alert.setGraphic(img);
+                		alert.getGraphic().setTranslateX(-30);
                 		alert.getButtonTypes().add(playagain);
                 		alert.getButtonTypes().add(ButtonType.FINISH);
-                		alert.setHeaderText("We Have a Winner");
-                		alert.setContentText(ongoing.players.get(0).toString()+" wins");
+                		alert.setHeaderText("h");
+                		alert.setContentText(ongoing.players.get(0).toString()+" wins!!");
                 		alert.showAndWait();
                 		if(alert.getResult().equals(ButtonType.FINISH)){
                 			backtomenu(new ActionEvent());
@@ -639,9 +650,7 @@ public class Gridcontroller2 implements Initializable{
 		alpha=new Sphere[150][3];
 		beta=new color[150];
 		index=0;
-		counter=0;
 		ongoing=Mainmenucontroller.g;
-		setgridlines();
 		if(resume){
 			for(int i=0;i<15;i++){
 	    		for(int j=0;j<10;j++){
@@ -667,6 +676,11 @@ public class Gridcontroller2 implements Initializable{
 	    	}
 			resume=false;
 			index=ongoing.current_turn;
+			setgridlines();
+		}
+		else{
+			counter=0;
+			setgridlines();
 		}
 		}
 }
