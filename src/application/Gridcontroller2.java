@@ -101,10 +101,23 @@ public class Gridcontroller2 implements Initializable{
     	Button r=(Button)page.getChildren().get(0);
     	if(ongoing.is_finished)
     		r.setDisable(true);
-    	else
-    		checkcondition();
-    	for(Player a:ongoing.players)
-    		System.out.println(a.number_of_orbs_onboard);
+    	else{
+    		for(Player p:ongoing.players){
+    			p.number_of_orbs_onboard=0;
+    		}
+    		for(int i=0;i<15;i++){
+        		for(int j=0;j<10;j++){
+        			for(Player p:ongoing.players){
+        				if(beta[i*10+j]==null)
+        					break;
+        				else if(p.Color.equals(beta[i*10+j])){
+        					p.number_of_orbs_onboard+=balls[i][j];;
+        					break;
+        				}
+        			}
+        		}
+    		}
+    	}
     	if(root==null){
     		//System.out.println("fdfsf");
     	}
@@ -147,7 +160,7 @@ public class Gridcontroller2 implements Initializable{
         				if(beta[i*10+j]==null)
         					break;
         				else if(p.Color.equals(beta[i*10+j])){
-        					p.number_of_orbs_onboard++;
+        					p.number_of_orbs_onboard+=balls[i][j];;
         					break;
         				}
         			}
@@ -650,6 +663,7 @@ public class Gridcontroller2 implements Initializable{
 		alpha=new Sphere[150][3];
 		beta=new color[150];
 		index=0;
+		counter=0;
 		ongoing=Mainmenucontroller.g;
 		if(resume){
 			for(int i=0;i<15;i++){
@@ -679,7 +693,6 @@ public class Gridcontroller2 implements Initializable{
 			setgridlines();
 		}
 		else{
-			counter=0;
 			setgridlines();
 		}
 		}

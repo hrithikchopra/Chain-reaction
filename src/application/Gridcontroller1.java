@@ -115,12 +115,14 @@ public class Gridcontroller1 implements Initializable {
         				if(beta[i*6+j]==null)
         					break;
         				else if(p.Color.equals(beta[i*6+j])){
-        					p.number_of_orbs_onboard++;
+        					p.number_of_orbs_onboard+=balls[i][j];
         					break;
         				}
         			}
         		}
     		}
+    		for(Player p:ongoing.players)
+        		System.out.println(p.number_of_orbs_onboard);
     		undoflag=false;
     		index-=1; index%=ongoing.no_of_players;
     		if(index<0)
@@ -131,7 +133,6 @@ public class Gridcontroller1 implements Initializable {
     @FXML
     void backtomenu(ActionEvent event) throws Exception{
     	resume=true;
-    	savegrid();
     	if(ongoing.no_of_players==1)
     		ongoing.is_finished=true;
     	for(int i=0;i<9;i++){
@@ -149,11 +150,29 @@ public class Gridcontroller1 implements Initializable {
     	Button r=(Button)page.getChildren().get(0);
     	if(ongoing.is_finished)
     		r.setDisable(true);
-    	else
-        	checkcondition();
-    	if(root==null){
-    		//System.out.println("fdfsf");
+    	else{
+    		for(Player p:ongoing.players){
+    			p.number_of_orbs_onboard=0;
+    		}
+    		for(int i=0;i<9;i++){
+        		for(int j=0;j<6;j++){
+        			for(Player p:ongoing.players){
+        				if(beta[i*6+j]==null)
+        					break;
+        				else if(p.Color.equals(beta[i*6+j])){
+        					p.number_of_orbs_onboard+=balls[i][j];
+        					break;
+        				}
+        			}
+        		}
+    		}
     	}
+    	savegrid();
+    	for(Player p:ongoing.players)
+    		System.out.println(p.number_of_orbs_onboard);
+    	if(root==null){
+    	}
+    		//System.out.println("fdfsf");
     	else
     		root.getChildren().setAll(page);
     }
@@ -208,8 +227,8 @@ public class Gridcontroller1 implements Initializable {
     		                    });
     		                    latch.await();    		                    
     		                    while(counter!=csum()){
-    		                    	//System.out.println(counter+" "+csum());
-    		                    	Thread.sleep(100);
+    		                    	System.out.println(counter+" "+csum());
+    		                    	Thread.sleep(500);
     		                    }
     		                    checkcondition();
     		                    setgridlines();
@@ -655,6 +674,7 @@ public class Gridcontroller1 implements Initializable {
 		beta=new color[54];
 		index=0;
 		ongoing=Mainmenucontroller.g;
+		counter=0;
 		if(resume){
 			for(int i=0;i<9;i++){
 	    		for(int j=0;j<6;j++){
@@ -683,7 +703,6 @@ public class Gridcontroller1 implements Initializable {
 			setgridlines();
 		}
 		else{
-			counter=0;
 			setgridlines();
 		}
 		}

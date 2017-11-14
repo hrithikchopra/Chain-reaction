@@ -68,9 +68,12 @@ public class Mainmenucontroller implements Initializable {
     	Gridcontroller1.resume=true;
     	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource(gridchoice));
     	rootpane.setBackground(null);
+    	//System.out.println(Gridcontroller1.counter);
     	for(Player a:g.players){
+    		//System.out.println(a.number_of_orbs_onboard);
     		Gridcontroller1.counter+=a.number_of_orbs_onboard;
     	}
+    	//System.out.println(Gridcontroller1.counter);
     	if(rootpane==null){
     		//System.out.println("fdfsf");
     	}
