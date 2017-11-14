@@ -228,7 +228,7 @@ public class Gridcontroller2 implements Initializable{
     		                    latch.await();    		                    
     		                    while(counter!=csum()){
     		                    	//System.out.println(counter+" "+csum());
-    		                    	//Thread.sleep(1000);
+    		                    	Thread.sleep(100);
     		                    }
     		                    checkcondition();
     		                    setgridlines();

@@ -151,8 +151,6 @@ public class Gridcontroller1 implements Initializable {
     		r.setDisable(true);
     	else
         	checkcondition();
-    	for(Player a:ongoing.players)
-    		System.out.println(a.number_of_orbs_onboard);
     	if(root==null){
     		//System.out.println("fdfsf");
     	}
@@ -210,7 +208,7 @@ public class Gridcontroller1 implements Initializable {
     		                    });
     		                    latch.await();    		                    
     		                    while(counter!=csum()){
-    		                    	System.out.println(counter+" "+csum());
+    		                    	//System.out.println(counter+" "+csum());
     		                    	Thread.sleep(100);
     		                    }
     		                    checkcondition();
