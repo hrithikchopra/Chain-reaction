@@ -48,24 +48,65 @@ import application.Player;
  * @author hrithik
  */
 public class Gridcontroller2 implements Initializable{
+	/**
+	 * Integer variable which tells number of orbs in each cell
+	 */
 	static volatile int[][] balls;
+	/**
+	 * Integer variable to keep count of number of turns
+	 */
 	static int counter=0;
+	/**
+	 * Boolean variable which tells whether we are resuming a game or not
+	 */
 	public static boolean resume=false;
+	/**
+	 * Boolean variable which tells whether user can undo or not
+	 */
 	public static boolean undoflag=false;
+	/**
+	 * Game instance which represents the ongoing game
+	 */
 	static Game ongoing=Mainmenucontroller.g;
+	/**
+	 * Player instance whose turn it is
+	 */
 	static Player current;
+	/**
+	 * Integer variable which tells whose turn it is
+	 */
 	static int index;
+	/**
+	 * 2D array of orbs which stores instances of JavaFX spheres inserted in grid
+	 */
+	public Sphere[][] alpha;
+	/**
+	 * Boolean variable which tells whether a past move is over or not
+	 */
+	static boolean makemove=true;
+	/**
+	 * 2D array of color which stores instances of JavaFX Color 
+	 */
+	static volatile public color[] beta;
+	/**
+	 * root/parent node of the page
+	 */
 	@FXML
     private AnchorPane root;
 	@FXML
+	/**
+	 * Gridpane
+	 */
 	GridPane gamegrid;
-	public Sphere[][] alpha;
-	static volatile public color[] beta;
-	static boolean makemove=true;
     @FXML
     private ResourceBundle resources;
     @FXML
     private URL location;
+    /**
+     * This method is used to restart a ongoing game
+     * @param event This is the event which is generated when user clicks restart button 
+     * @throws Exception
+     */
     @FXML
     public void restartgame(ActionEvent event) throws Exception{
     	color[] previous=new color[Mainmenucontroller.playercount];
@@ -89,6 +130,11 @@ public class Gridcontroller2 implements Initializable{
     	else
     		root.getChildren().setAll(page);
     }
+    /**
+     * This method is used to return to the main menu page
+     * @param event This is the event which is generated when user clicks main menu button 
+     * @throws Exception
+     */
     @FXML
     public void backtomenu(ActionEvent event) throws Exception{
     	resume=true;
@@ -133,6 +179,12 @@ public class Gridcontroller2 implements Initializable{
     	else
     		root.getChildren().setAll(page); 
     }
+    /**
+     *  This method is used to undo the last move
+     * @param event This is the event which is generated when user clicks undo button 
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
     @FXML
     public void undo(ActionEvent event) throws Exception{
     	if(undoflag){
@@ -182,6 +234,12 @@ public class Gridcontroller2 implements Initializable{
     		}
     	setgridlines();
     }
+    /**
+     * This method is used to calculate the critical mass of a cell
+     * @param x Column number
+     * @param y Row Number
+     * @return The critical mass of that particular cell
+     */
     int calculatecriticalmass(int x,int y){
     	if(x==0 && y==0 || x==9 && y==14 || x==9 && y==0 || x==0 && y==14)
     		return 1;
@@ -190,6 +248,10 @@ public class Gridcontroller2 implements Initializable{
     	else
     		return 3;
     }
+    /**
+     * This method is used to set the color of the gridlines of the gamegrid.
+     * The color of the lines is set to the color of the player whose turn it is.
+     */
     public void setgridlines(){
     	int i=0;
     	Player next=ongoing.players.get(index);
@@ -206,6 +268,14 @@ public class Gridcontroller2 implements Initializable{
 	    	i++;
 	    }
     }
+    /**
+     * This method helps the user in adding an orb
+     * @param e This is the event which is generated when user click on a cell
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws ExecutionException
+     * @throws ColorMismatchException
+     */
     @FXML
     private void useraddorb(MouseEvent e) throws IOException, InterruptedException, ExecutionException, ColorMismatchException{
     	Node target = (Node) e.getTarget();
@@ -289,7 +359,12 @@ public class Gridcontroller2 implements Initializable{
         	
         }
     }
-    
+    /**
+	 * Simply adds an orb to a cell by calling the addorbn function.
+	 * n is the nth orb it is adding.
+	 * @param x Column address
+	 * @param y Row address
+	 */
      void addorb(int x,int y){
     	 if(ongoing.is_finished)
 			 return;
@@ -308,6 +383,12 @@ public class Gridcontroller2 implements Initializable{
         	balls[y][x]++; 
     	}
     }
+     /**
+      * This method is used to add the first orb in the cell
+      * @param x Column number
+      * @param y Row number
+      * @param c Color of the orb,can be null
+      */
     public void addorb1(int x,int y,color c){
     	Sphere s=new Sphere(8);
     	s.setDrawMode(DrawMode.FILL);
@@ -333,6 +414,12 @@ public class Gridcontroller2 implements Initializable{
         rotateTransition.setCycleCount(Integer.MAX_VALUE);
         rotateTransition.play(); 
     }
+    /**
+     * This method is used to add the second orb in the cell
+     * @param x Column number
+     * @param y Row number
+     * @param c Color of the orb,can be null
+     */
     public void addorb2(int x,int y,color c){
     	Sphere s=new Sphere(8);
     	s.setDrawMode(DrawMode.FILL);
@@ -356,6 +443,12 @@ public class Gridcontroller2 implements Initializable{
         pathTransition.setCycleCount(Timeline.INDEFINITE);
         pathTransition.play();   
     }
+    /**
+     * This method is used to add the third orb in the cell
+     * @param x Column number
+     * @param y Row number
+     * @param c Color of the orb,can be null
+     */
     public void addorb3(int x,int y,color c){
     	Sphere s=new Sphere(8);
     	s.setDrawMode(DrawMode.FILL);
@@ -380,6 +473,12 @@ public class Gridcontroller2 implements Initializable{
         pathTransition.setCycleCount(Timeline.INDEFINITE);
         pathTransition.play();
     }
+    /**
+     * This method is used to blast the cell and split the orbs in orthogonal direction
+     * when number of orbs equal the critical mass
+     * @param x Column number
+     * @param y Row number
+     */
     public void split(int x,int y){
     	int k=calculatecriticalmass(x,y);
     	PhongMaterial pm=new PhongMaterial();
@@ -476,6 +575,13 @@ public class Gridcontroller2 implements Initializable{
     		break;
     	}
     }
+    /**
+     * This method helps in sending the orb orthogonally to the right when the
+     * cell blasts
+     * @param s JavaFx sphere which is to be sent in the right direction
+     * @param x Destination colummn address
+     * @param y Destination row address
+     */
     public void goright(Sphere s,int x,int y){
     	Line line=new Line();
         line.setStartX(45.0f);
@@ -497,6 +603,13 @@ public class Gridcontroller2 implements Initializable{
             }
         });
     }
+    /**
+     * This method helps in sending the orb orthogonally to the left when the
+     * cell blasts
+     * @param s JavaFx sphere which is to be sent in the left direction
+     * @param x Destination colummn address
+     * @param y Destination row address
+     */
     public void goleft(Sphere s,int x,int y){
     	Line line=new Line();
         line.setStartX(45.0f);
@@ -518,6 +631,13 @@ public class Gridcontroller2 implements Initializable{
             }
         });
     }
+    /**
+     * This method helps in sending the orb orthogonally to down when the
+     * cell blasts
+     * @param s JavaFx sphere which is to be sent in the south direction
+     * @param x Destination colummn address
+     * @param y Destination row address
+     */
     public void godown(Sphere s,int x,int y){
     	Line line=new Line();
         line.setStartX(45.0f);
@@ -539,6 +659,13 @@ public class Gridcontroller2 implements Initializable{
             }
         });
     }
+    /**
+     * This method helps in sending the orb orthogonally to up when the
+     * cell blasts
+     * @param s JavaFx sphere which is to be sent in the north direction
+     * @param x Destination colummn address
+     * @param y Destination row address
+     */
 	public void goUp(Sphere s,int x,int y){
 		Line line=new Line();
         line.setStartX(45.0f);
@@ -560,6 +687,10 @@ public class Gridcontroller2 implements Initializable{
             }
         });
     }
+	 /**
+	  * This method is used to store the state of the grid
+	  * @throws IOException
+	  */
     public static void savegrid() throws IOException {
 		ObjectOutputStream out=null;
 		ObjectOutputStream out1=null;
@@ -574,6 +705,12 @@ public class Gridcontroller2 implements Initializable{
 			out1.close();
 		}
 	}
+    /**
+     * This method is used to restore the gamegrid
+     * @return 2D integer array which has previously saved state of the grid
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
 	public static int[][] restoregrid() throws IOException, ClassNotFoundException {
 		ObjectInputStream in=null;
 		try{
@@ -585,6 +722,13 @@ public class Gridcontroller2 implements Initializable{
 			in.close();
 		}
 	}
+	/**
+	 * Method used to restore the configuration of the grid which simply means which player is
+	 * occupying which cell
+	 * @return Array of type color
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	public static color[] restoregrid1() throws IOException, ClassNotFoundException {
 		ObjectInputStream in=null;
 		try{
@@ -596,6 +740,11 @@ public class Gridcontroller2 implements Initializable{
 			in.close();
 		}
 	}
+	/**
+	 * Method which checks which all players have lost till now
+	 * If all players have lost it stops the game and displays the winner.
+	 * @throws IOException
+	 */
 	@FXML
 	public void checkcondition() throws IOException{
 		for(Player p:ongoing.players){

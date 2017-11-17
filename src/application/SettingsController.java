@@ -21,16 +21,26 @@ public class SettingsController {
     private ResourceBundle resources;
     @FXML
     private URL location;
+    /**
+     * root/parent node of the settings page
+     */
     @FXML
     private AnchorPane root;
+    /**
+     * Each colorpicker object is used to take color input for players
+     */
     @FXML
     private static ColorPicker color_p8,color_p7,color_p6,color_p5,color_p4,color_p3,color_p2,color_p1;
+    /**
+     * Array to store color values of players
+     */
     static Color[] values;
     /**
      * This variable is used so that default values are set
      * only once.
      */
     public static int counter=0;
+    
     /**
      * This method is used to handle the event when the user tries to
      * change the color of the orb correponding to a player.
@@ -51,9 +61,10 @@ public class SettingsController {
     	}
     	values[index]=c.getValue();    	
     }
+   
     /**
      * This method is used to handle the event when player clicks the menu
-     * button on the settings button. It simply loads the Mainmenu.fxml page.
+     * button on the settings page. It simply loads the Mainmenu.fxml page.
      * @param event This parameter is the ActionEvent which is generated
      * when the user clicks the menu button.
      * @throws IOEException
@@ -72,6 +83,9 @@ public class SettingsController {
     	else
     		root.getChildren().setAll(page);
     }
+    /**
+     * Initializes this class objects when Settings.fxml is loaded
+     */
     @FXML
     void initialize() {
     	if(counter==0)
