@@ -191,8 +191,16 @@
             <Pane prefHeight="43.0" prefWidth="92.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
-      <Button layoutX="98.0" mnemonicParsing="false" onAction="#backtomenu" text="main menu" />
       <Button layoutX="20.0" mnemonicParsing="false" onAction="#undo" text="Undo" />
-      <Button layoutX="217.0" layoutY="1.0" mnemonicParsing="false" onAction="#restartgame" text="Restart" />
+      <MenuBar layoutX="99.0" layoutY="1.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Options">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#restartgame" text="Restart" />
+                  <MenuItem mnemonicParsing="false" onAction="#backtomenu" text="Main menu" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
    </children>
 </AnchorPane>

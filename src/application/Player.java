@@ -1,6 +1,10 @@
 package application;
 import java.io.Serializable;
-
+/**
+ * This is the class which handles the attributes of a player
+ * such as orb color,number of orbs,number of turns
+ * @author hrithik
+ */
 public class Player implements Serializable {
 	private static final long serialVersionUID = 1L;
 	color Color;
@@ -18,7 +22,20 @@ public class Player implements Serializable {
 	public String toString(){
 		return name;
 	}
+	@Override
+	public boolean equals(Object o){
+		Player comp=(Player)o;
+		if(comp.Color.equals(this.Color))
+			return true;
+		else
+			return false;
+	}
 }
+/**
+ * This class acts as controller class for the
+ * This is the class which handles the settings page
+ * @author hrithik
+ */
 class color implements Serializable {
 	private static final long serialVersionUID = 1L;
 	double red,green,blue;

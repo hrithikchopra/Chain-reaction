@@ -39,7 +39,13 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
-
+/**
+ *<h1> This class acts as controller class for the 9X6 Grid.</h1>
+ * This is the class which handles all the operations of 
+ * the game such as inserting an orb,undo,restart,splitting when
+ * fully loaded
+ * @author hrithik
+ */
 public class Gridcontroller1 implements Initializable {
 	static volatile int[][] balls;
 	static int counter=0;
@@ -49,6 +55,7 @@ public class Gridcontroller1 implements Initializable {
 	static Player current;
 	static int index;
 	public Sphere[][] alpha;
+	static boolean makemove=true;
 	static volatile public color[] beta;
 	@FXML
     private AnchorPane root;
@@ -61,11 +68,14 @@ public class Gridcontroller1 implements Initializable {
     @FXML
     public void restartgame(ActionEvent event) throws Exception{
     	color[] previous=new color[Mainmenucontroller.playercount];
+    	if(SettingsController.values==null)
+    		SettingsController.calldefault();
     	for(int i=0;i<Mainmenucontroller.playercount;i++){
     		color c=new color(SettingsController.values[i].getRed(),SettingsController.values[i].getGreen(),SettingsController.values[i].getBlue());
     		previous[i]=c;
     	}
     	Mainmenucontroller.g=new Game(Mainmenucontroller.playercount,Mainmenucontroller.gridchoice);
+    	System.gc();
     	for(int i=0;i<Mainmenucontroller.playercount;i++){
     		Mainmenucontroller.g.players.add(new Player(new color(previous[i].red,previous[i].green,previous[i].blue),i));
     	}
@@ -121,8 +131,6 @@ public class Gridcontroller1 implements Initializable {
         			}
         		}
     		}
-    		for(Player p:ongoing.players)
-        		System.out.println(p.number_of_orbs_onboard);
     		undoflag=false;
     		index-=1; index%=ongoing.no_of_players;
     		if(index<0)
@@ -135,21 +143,24 @@ public class Gridcontroller1 implements Initializable {
     	resume=true;
     	if(ongoing.no_of_players==1)
     		ongoing.is_finished=true;
+    	else{
     	for(int i=0;i<9;i++){
     		for(int j=0;j<6;j++){
     			Mainmenucontroller.g.gamegrid.grid[i][j].n_orbs=balls[i][j];
     			Mainmenucontroller.g.gamegrid.grid[i][j].currentcolor=beta[i*6+j];
     		}
+    		
+    	}ongoing.current_turn=index;
     	}
-    	ongoing.current_turn=index;
-    	
-	    Mainmenucontroller.serialize(Mainmenucontroller.g,"GAME.txt");
-    	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Mainmenu.fxml"));
+    	System.gc();
+       	AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("Mainmenu.fxml"));
     	Slider s=(Slider)page.getChildren().get(1);
     	s.setValue(Mainmenucontroller.playercount);
     	Button r=(Button)page.getChildren().get(0);
-    	if(ongoing.is_finished)
+    	if(ongoing.is_finished){
     		r.setDisable(true);
+    		resume=false;
+    	}
     	else{
     		for(Player p:ongoing.players){
     			p.number_of_orbs_onboard=0;
@@ -168,8 +179,7 @@ public class Gridcontroller1 implements Initializable {
     		}
     	}
     	savegrid();
-    	for(Player p:ongoing.players)
-    		System.out.println(p.number_of_orbs_onboard);
+	    Mainmenucontroller.serialize(Mainmenucontroller.g,"GAME.txt");
     	if(root==null){
     	}
     		//System.out.println("fdfsf");
@@ -185,29 +195,35 @@ public class Gridcontroller1 implements Initializable {
     		return 3;
     }
     @FXML
-    private void useraddorb(MouseEvent e) throws IOException, InterruptedException, ExecutionException{
+    private void useraddorb(MouseEvent e) throws IOException, InterruptedException, ExecutionException, ColorMismatchException{
     	Node target = (Node) e.getTarget();
         Integer colIndex = GridPane.getColumnIndex(target);
         Integer rowIndex = GridPane.getRowIndex(target);
-        if (colIndex == null || rowIndex == null) {
+        if (colIndex == null || rowIndex == null || !makemove) {
         } 
         else {
         	int k=calculatecriticalmass(colIndex.intValue(),rowIndex.intValue());
             current=ongoing.players.get(index);
         	if(beta[rowIndex.intValue()*6+colIndex.intValue()]!=null && !beta[rowIndex.intValue()*6+colIndex.intValue()].equals(current.Color)){
+        		try{
+        		throw new ColorMismatchException("This cell is occupied by another player");
+        		}
+        		catch(Exception ex){
+        			System.out.println(ex.getMessage());
+        		}
         	}
         	else {
-        	undoflag=true;
+        	undoflag=true; 
         	current.turns++;
             index+=1; index=index%ongoing.no_of_players;
             counter++;
         	if(balls[rowIndex.intValue()][colIndex.intValue()]==k){
-        		savegrid();
+        		savegrid(); makemove=false;
         		if(ongoing.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].currentplayer==null){
                 	ongoing.gamegrid.grid[rowIndex.intValue()][colIndex.intValue()].currentplayer=current;
                 }
             	balls[rowIndex.intValue()][colIndex.intValue()]=0;
-    			Service<Void> service = new Service<Void>() {
+            	Service<Void> service = new Service<Void>() {
     		        @Override
     		        protected Task<Void> createTask() {
     		            return new Task<Void>() {           
@@ -220,17 +236,20 @@ public class Gridcontroller1 implements Initializable {
     		                        public void run() {
     		                            try{
     		                    			split(colIndex.intValue(),rowIndex.intValue());
-    		                            }finally{
+    		              			}finally{
     		                                latch.countDown();
     		                            }
     		                        }
     		                    });
-    		                    latch.await();    		                    
-    		                    while(counter!=csum()){
+    		                    latch.await();    
+    		                    int i=0;
+    		                    while(counter!=csum() && i<12){
     		                    	System.out.println(counter+" "+csum());
+    		                    	i++;
     		                    	Thread.sleep(500);
     		                    }
     		                    checkcondition();
+    		                    makemove=true;
     		                    setgridlines();
     		                    return null;
     		                }
@@ -255,7 +274,6 @@ public class Gridcontroller1 implements Initializable {
             	setgridlines();
         	}
         	}
-        	
         }
     }
     public void setgridlines(){
@@ -372,6 +390,14 @@ public class Gridcontroller1 implements Initializable {
         		goleft(s,x-1,y); godown(n,x,y+1);
         	}
         	else if(x==0 && y==8){
+        		for(Player p:ongoing.players){
+        			if(p.equals(current))
+        				continue;
+        			if(beta[6*(x+1)+y]!=null && beta[6*(x+1)+y].equals(p.Color))
+        				p.number_of_orbs_onboard-=1;
+        			if(beta[6*(x)+y-1]!=null && beta[6*(x)+y-1].equals(p.Color))
+        				p.number_of_orbs_onboard-=1;
+        		}
         		goright(s,x+1,y); goUp(n,x,y-1);
         	}
         	else{
@@ -440,6 +466,7 @@ public class Gridcontroller1 implements Initializable {
     		goleft(s2,x-1,y);
     		goright(s3,x+1,y);
     		goUp(s4,x,y-1);
+    		
     		break;
     	}
     }
@@ -461,7 +488,7 @@ public class Gridcontroller1 implements Initializable {
             @Override
             public void handle(ActionEvent event) {
             	gamegrid.getChildren().remove(s);                                                                     
-					useraddorb(x,y);
+					addorb(x,y);
             }
         });
     }
@@ -483,7 +510,7 @@ public class Gridcontroller1 implements Initializable {
             @Override
             public void handle(ActionEvent event) {
             	gamegrid.getChildren().remove(s);                                                                     
-					useraddorb(x,y);
+					addorb(x,y);
             }
         });
     }
@@ -505,7 +532,7 @@ public class Gridcontroller1 implements Initializable {
             @Override
             public void handle(ActionEvent event) {
             	gamegrid.getChildren().remove(s);                                                                     
-					useraddorb(x,y);
+					addorb(x,y);
             }
         });
     }
@@ -527,33 +554,37 @@ public class Gridcontroller1 implements Initializable {
             @Override
             public void handle(ActionEvent event) {
             	gamegrid.getChildren().remove(s);                                                                     
-					useraddorb(x,y);
+					addorb(x,y);
             }
         });
     }
-	 void useraddorb(int x,int y){
+	 void addorb(int x,int y){
+		 if(ongoing.is_finished)
+			 return;
 	    	int k=calculatecriticalmass(x,y);
 	    	if(balls[y][x]==k){
 	    		balls[y][x]=0;
 	    		split(x,y);
 	    	}
 	    	else{
+	    		beta[y*6+x]=current.Color;
+	    		//System.out.println(beta[y*6+x]);
 	        	if(balls[y][x]==0)
 	        		addorb1(x,y,null);
 	        	else if(balls[y][x]==1)
 	        		addorb2(x,y,null);
 	        	else if(balls[y][x]==2)
 	        		addorb3(x,y,null);
-	        	balls[y][x]++; 
+	    		balls[y][x]++;
 	    	}
 	    }
     public static void savegrid() throws IOException {
     	ObjectOutputStream out=null;
 		ObjectOutputStream out1=null;
 		try{
-			out=new ObjectOutputStream(new FileOutputStream("grid1state.txt"));
+			out=new ObjectOutputStream(new FileOutputStream("gridstate.txt"));
 			out.writeObject(balls);
-			out1=new ObjectOutputStream(new FileOutputStream("grid1state1.txt"));
+			out1=new ObjectOutputStream(new FileOutputStream("gridstate1.txt"));
 			out1.writeObject(beta);
 		}
 		finally{
@@ -564,7 +595,7 @@ public class Gridcontroller1 implements Initializable {
 	public static int[][] restoregrid() throws IOException, ClassNotFoundException {
 		ObjectInputStream in=null;
 		try{
-			in=new ObjectInputStream(new FileInputStream("grid1state.txt"));
+			in=new ObjectInputStream(new FileInputStream("gridstate.txt"));
 			int[][] g=(int[][])in.readObject();
 			return g;
 		}
@@ -575,7 +606,7 @@ public class Gridcontroller1 implements Initializable {
 	public static color[] restoregrid1() throws IOException, ClassNotFoundException {
 		ObjectInputStream in=null;
 		try{
-			in=new ObjectInputStream(new FileInputStream("grid1state1.txt"));
+			in=new ObjectInputStream(new FileInputStream("gridstate1.txt"));
 			color[] g=(color[])in.readObject();
 			return g;
 		}
@@ -621,6 +652,13 @@ public class Gridcontroller1 implements Initializable {
                 @Override
                 public void run() {
                 	try {
+                		ongoing.is_finished=true;
+                		gamegrid.setVisible(false);
+                		Color c=new Color(current.Color.red,current.Color.green,current.Color.blue,1.0);
+                    	String colour=c.toString();
+                    	colour="#"+colour.substring(2);
+                    	String style=new String("-fx-background-color:"+colour+";"+"-fx-alignment: center;");
+                		root.setStyle(style);
                 		Alert alert = new Alert(AlertType.INFORMATION);
                 		ButtonType playagain=new ButtonType("Play Again");
                 		alert.getButtonTypes().remove(0);
@@ -640,11 +678,6 @@ public class Gridcontroller1 implements Initializable {
                 		if(alert.getResult().equals(playagain)){
                 			restartgame(new ActionEvent());
                 		}
-						/*AnchorPane page = (AnchorPane) FXMLLoader.load(Mainmenu.class.getResource("ended.fxml"));
-						root.setBackground(null);
-						Label l=(Label)page.getChildren().get(0);
-						l.setText(ongoing.players.get(0).toString()+" wins");
-						root.getChildren().setAll(page); */
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -653,15 +686,12 @@ public class Gridcontroller1 implements Initializable {
 		}
 	}
 	static int csum(){
-		int s=0;
-		for(int i=0;i<9;i++){
-    		for(int j=0;j<6;j++){
-    		//	System.out.print(balls[i][j]+" ");
+	int s=0;
+	for(int i=0;i<9;i++){
+    	for(int j=0;j<6;j++){
     			s+=balls[i][j];
     		}
-    		//System.out.println("");
 		}
-		//System.out.println("");
 		return s;
 	}
 	@FXML
@@ -676,6 +706,7 @@ public class Gridcontroller1 implements Initializable {
 		ongoing=Mainmenucontroller.g;
 		counter=0;
 		if(resume){
+			System.out.println("hello");
 			for(int i=0;i<9;i++){
 	    		for(int j=0;j<6;j++){
 	    			int n=Mainmenucontroller.g.gamegrid.grid[i][j].n_orbs;

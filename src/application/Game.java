@@ -1,6 +1,14 @@
 package application;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+/**
+* <h1>This program simply supports the game by providing all the attributes
+* No output is displayed by this program</h1>
+* @author  Hrithik Chopra
+* @author  Anshul Gupta
+* 
+*/
 
 public class Game implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -26,21 +34,11 @@ public class Game implements Serializable{
 	}
 
 }
-class Cell implements Serializable {
-	private static final long serialVersionUID = 1L;
-	color currentcolor;
-	Player currentplayer;
-	int n_orbs;
-	public Cell(){
-		this.currentcolor=null;
-		this.currentplayer=null;
-		n_orbs=0;
-	}
-	public void setplayer(Player p){
-		this.currentplayer=p;
-		this.currentcolor=p.Color;
-	}
-}
+/**
+ * This class represents the grid state of the game
+ * @author hrithik
+ *
+ */
 class Grid implements Serializable {
 	private static final long serialVersionUID = 2L;
 	Cell[][] grid;
@@ -61,5 +59,26 @@ class Grid implements Serializable {
 				}
 			}
 		}
+	}
+}
+/**
+ * @inclue
+ * This class represents each grid cell in the game
+ * @author hrithik
+ *
+ */
+class Cell implements Serializable {
+	private static final long serialVersionUID = 1L;
+	color currentcolor;
+	Player currentplayer;
+	int n_orbs;
+	public Cell(){
+		this.currentcolor=null;
+		this.currentplayer=null;
+		n_orbs=0;
+	}
+	public void setplayer(Player p){
+		this.currentplayer=p;
+		this.currentcolor=p.Color;
 	}
 }

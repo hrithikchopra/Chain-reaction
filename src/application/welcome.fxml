@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.StackPane?>
+
+
+<StackPane prefHeight="300.0" prefWidth="492.0" style="-fx-background-image: url('file:/home/hrithik/workspace/Chain_Reaction/welcome.jpg'); -fx-background-repeat: no-repeat; -fx-background-size: stretch;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.welcome">
+	<!-- TODO Add Nodes -->
+</StackPane>

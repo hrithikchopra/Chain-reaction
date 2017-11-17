@@ -9,7 +9,6 @@ import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Scanner;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +19,11 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
+/**
+ * This class acts as controller class for the Settings.fxml file
+ * This is the class which handles the settings page
+ * @author hrithik
+ */
 
 public class Mainmenucontroller implements Initializable {
 	static String gridchoice="Grid1.fxml";
@@ -31,6 +35,8 @@ public class Mainmenucontroller implements Initializable {
     private Slider no_of_players;
 	@FXML 
 	private Button Resumegame;
+	@FXML
+	private Button SettingsButton;
 	static int playercount=2;
     @FXML
     private URL location;
@@ -176,5 +182,6 @@ public class Mainmenucontroller implements Initializable {
     }
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		
 	}
 }
